@@ -11,11 +11,12 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.neuroquantix</groupId>
-    <artifactId>neuroauth</artifactId>
+    <groupId>com.facturactivaAuth</groupId>
+    <artifactId>facturactivaAuth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>facturactiva</name>
-    <description>Sistema para Facturactiva</description>
+    <packaging>war</packaging>
+    <name>facturactivaAuth</name>
+    <description>Sistema para facturactivaAuth</description>
 
     <properties>
         <java.version>21</java.version>
@@ -63,6 +64,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>${artifactId}</finalName>
     </build>
 
 </project>

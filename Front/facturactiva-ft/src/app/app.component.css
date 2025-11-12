@@ -1,0 +1,3 @@
+/* opcional: estilos globales del contenedor raíz */
+:host { display: block; height: 100%; }
+html, body { height: 100%; margin: 0; }

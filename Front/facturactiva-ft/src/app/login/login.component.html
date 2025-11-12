@@ -1,0 +1,38 @@
+<div class="login-container">
+  <div class="left">
+    <img src="/arroba-image.png" alt="logo" class="arroba-img" />
+  </div>
+
+  <div class="right">
+    <div class="login-box">
+      <img src="/logo-facturactiva.png" alt="facturactiva" class="logo" />
+      <p>Inicie sesión en su cuenta.</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Usuario -->
+        <label class="input-label">Usuario:</label>
+        <div class="input-group">
+          <input type="email" formControlName="usuario" placeholder="info@provistatechnologies.com" />
+          <span class="icon">📧</span>
+        </div>
+        <div *ngIf="submitted && f['usuario'].errors" class="error">
+          <small *ngIf="f['usuario'].errors['required']">El usuario es requerido.</small>
+          <small *ngIf="f['usuario'].errors['email']">Ingrese un correo válido.</small>
+        </div>
+
+        <!-- Contraseña -->
+        <label class="input-label">Contraseña:</label>
+        <div class="input-group">
+          <input type="password" formControlName="password" placeholder="Introduzca su contraseña" />
+          <span class="icon">🔒</span>
+        </div>
+        <div *ngIf="submitted && f['password'].errors" class="error">
+          <small *ngIf="f['password'].errors['required']">La contraseña es requerida.</small>
+        </div>
+
+        <a href="#" class="forgot">¿Olvidó su contraseña?</a>
+        <button type="submit">Inicie sesión</button>
+      </form>
+    </div>
+  </div>
+</div>

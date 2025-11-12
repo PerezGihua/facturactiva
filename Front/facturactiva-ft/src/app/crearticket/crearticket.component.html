@@ -1,0 +1,117 @@
+<div class="main-container">
+
+  <header class="header">
+    <div class="logo-section">
+      <img src="/logo.png" alt="Logo Facturactiva" class="logo" />
+    </div>
+
+    <div class="search-section">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
+      </div>
+    </div>
+
+    <div class="user-section">
+      <div class="notification-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div class="user-info">
+        <span class="user-name">Rodrigo Gallardo</span>
+        <span class="user-role">CLIENTE</span>
+        <div class="user-avatar">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+    <aside class="sidebar">
+      <div class="sidebar-title">PRINCIPAL</div>
+      <ul>
+        <li class="active">
+          <i class="fa-solid fa-house"></i> Crearticket
+        </li>
+        <li>
+          <i class="fa-solid fa-ticket"></i> Ticket
+        </li>
+      </ul>
+
+      <div class="bottom">
+        <i class="fa-solid fa-right-from-bracket"></i> Salir
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="tickets-container">
+        <div class="tickets-header">
+          <h2>Mis Tickets</h2>
+        </div>
+      </div>
+
+<div class="form-container">
+  <div class="form-header">
+    <h2 class="form-title">
+      <i class="fa-solid fa-list-ul"></i> Detalles
+    </h2>
+    <div class="close-box">
+      <i class="fa-solid fa-xmark close-icon"></i>
+    </div>
+  </div>
+
+  <p class="form-subtitle">Ver todos los detalles disponibles</p>
+
+  <h3 class="form-section-title">Información principal</h3>
+
+  <div class="form-group">
+    <label for="codigo">Código:</label>
+    <input id="codigo" type="text" placeholder="Ingrese código" />
+  </div>
+
+  <div class="form-group">
+    <label for="asunto">Asunto:</label>
+    <input id="asunto" type="text" placeholder="Ingrese asunto" />
+  </div>
+
+  <div class="form-group">
+    <label for="descripcion">Descripción:</label>
+    <textarea
+      id="descripcion"
+      rows="3"
+      placeholder="Describa el problema"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="valor">Valor:</label>
+    <input id="valor" type="text" placeholder="Ingrese valor" />
+  </div>
+
+  <div class="form-group">
+    <label for="estado">Estado:</label>
+  <input id="estado" type="text" placeholder="Ingrese estado" />
+</div>
+
+  <div class="form-group">
+    <label for="tipo">Tipo:</label>
+    <select id="tipo">
+    <option value="" disabled selected>Elegir el tipo de documento</option>
+    <option value="Factura">Factura</option>
+    <option value="Boleta de venta">Boleta de venta</option>
+    <option value="Nota de credito">Nota de crédito</option>
+    <option value="Nota de debito">Nota de débito</option>
+    <option value="Comprobante de retencion">Comprobante de retención</option>
+    <option value="Guia de remision - Remitente">Guía de remisión - Remitente</option>
+    <option value="Guia de remision - Transportista">Guía de remisión - Transportista</option>
+    <option value="otros">Otros</option>
+    </select>
+  </div>
+  <div class="button-group">
+    <button class="btn editar">Editar</button>
+    <button class="btn cerrar">Cerrar</button>
+         </div>
+      </div>
+    </main>
+  </div>
+</div>
