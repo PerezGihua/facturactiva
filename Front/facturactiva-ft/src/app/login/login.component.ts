@@ -12,23 +12,25 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
   loginForm: FormGroup;
   submitted = false;
-
+  showModal = false; 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       usuario: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
   }
-
   get f() {
     return this.loginForm.controls;
   }
-
   onSubmit() {
     this.submitted = true;
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
     console.log(this.loginForm.value);
+  }
+  openModal() { 
+    this.showModal = true;
+  }
+  closeModal() { 
+    this.showModal = false;
   }
 }
