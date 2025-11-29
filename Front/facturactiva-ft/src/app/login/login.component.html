@@ -39,12 +39,12 @@
 <div class="modal-backdrop" *ngIf="showModal"></div>
 <div class="modal-container" *ngIf="showModal">
   <div class="modal-box">
-    <h3>Recuperar contraseña</h3>
-    <p>Ingrese su correo para enviar un enlace de recuperación.</p>
-    <input type="email" placeholder="usuario@facturactiva.com" class="modal-input" />
-    <div class="modal-buttons">
-      <button class="btn-send">Enviar</button>
-      <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
-    </div>
+    <span class="modal-close" (click)="closeModal()">✖</span>
+    <h3>Soporte</h3>
+    <p>
+      Comunícate con<br>
+      <strong>soportefacturactiva&#64;gmail.com</strong><br>
+      para verificar tu problema.
+    </p>
   </div>
 </div>

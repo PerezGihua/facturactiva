@@ -178,38 +178,16 @@ button:hover {
   text-align: center;
 }
 
-.modal-input {
-  width: 95%;
-  padding: 10px;
-  margin-top: 15px auto 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  display: block;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  gap: 8px;
-}
-
-.btn-send {
-  background: #4caf50;
-  color: white;
-  padding: 5px 10px;
-  font-size: 13px;
-  border: none;
-  border-radius: 6px;
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
+  color: #888;
 }
 
-.btn-cancel {
-  background: #d9534f;
-  color: white;
-  padding: 5px 10px;
-  font-size: 13px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.modal-close:hover {
+  color: #000;
 }

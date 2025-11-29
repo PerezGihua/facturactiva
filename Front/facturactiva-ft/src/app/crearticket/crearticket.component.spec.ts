@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CrearticketComponent } from './crearticket.component';
 
 describe('CrearticketComponent', () => {
@@ -9,8 +8,7 @@ describe('CrearticketComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CrearticketComponent]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CrearticketComponent);
     component = fixture.componentInstance;
@@ -19,5 +17,11 @@ describe('CrearticketComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should toggle panel', () => {
+    const initial = component.isPanelOpen;
+    component.togglePanel();
+    expect(component.isPanelOpen).toBe(!initial);
   });
 });
