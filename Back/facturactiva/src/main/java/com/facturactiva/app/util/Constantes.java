@@ -2,11 +2,17 @@ package com.facturactiva.app.util;
 
 public class Constantes {
 	
+	// ACCESOS PLATAFORMAS
+	public static final String FRONT_URL = "http://localhost:4200";
+	
     // PARAMETROS DEL SP
     public static final String PARAM_USERNAME = "username";
     public static final String PARAM_PASSWORD = "psw";
+    public static final String PARAM_ID_ROL = "id_rol";
     public static final String PARAM_ROLE_NAME = "roleName";
     public static final String PARAM_MESSAGE = "mensaje";
+	public static final String PARAM_NOMBRE_USER = "nombre_usuario";
+	public static final String PARAM_APELLIDO_USER = "apellido_usuario";
 
     // MENSAJES DE AUTENTICACION
     public static final String MSG_AUTH_SUCCESS = "Autenticación exitosa";
@@ -22,6 +28,9 @@ public class Constantes {
     public static final String COLUMN_ROLE_NAME = "roleName";
     public static final String OUT_MENSAJE = "mensaje";
     public static final String OUT_ROLE_NAME = "roleName";
+    
+    // NOMBRES DE SP
+    public static final String SP_VALIDAR_USER = "SP_Validar_User";
 
     // POSIBLES ERRORES
     public static final String DATABASE_ERROR = "ERROR_DB";
@@ -38,6 +47,7 @@ public class Constantes {
     // CARACTERES EXTRAÑOS
     public static final String ASTERISCO = "*";
     public static final String UNO = "1";
+    public static final String ESPACIO_BLANCO = " ";
     
     private Constantes() {
         
