@@ -111,6 +111,12 @@ html, body {
   background-color: #e0e0e0;
 }
 
+.user-text{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
 .user-name {
   font-weight: 600;
   font-size: 14px;
@@ -122,6 +128,7 @@ html, body {
   color: #666;
   margin-left: 5px;
   font-family: "Roboto", sans-serif;
+
 }
 
 .user-avatar {

@@ -2,5 +2,5 @@ projectKey=Proyecto-Facturactiva
 serverUrl=http://localhost:9000
 serverVersion=25.11.0.114957
 dashboardUrl=http://localhost:9000/dashboard?id=Proyecto-Facturactiva
-ceTaskId=cae8dffb-ff96-4d29-be53-d243bad22aad
-ceTaskUrl=http://localhost:9000/api/ce/task?id=cae8dffb-ff96-4d29-be53-d243bad22aad
+ceTaskId=6e237173-85c2-457d-a35f-fc3b536c07e2
+ceTaskUrl=http://localhost:9000/api/ce/task?id=6e237173-85c2-457d-a35f-fc3b536c07e2

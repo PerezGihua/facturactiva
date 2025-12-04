@@ -52,10 +52,9 @@ export class LoginComponent {
 
         if (response.message === "Autenticación exitosa") {
 
+          localStorage.setItem('idRol', response.idRol);
           localStorage.setItem('nombreUser', response.nombreUser);
-          localStorage.setItem('roleName', response.roleName);
-
-          this.router.navigate(['/inicio']);
+          this.router.navigate(['/inicio'], { replaceUrl: true });
 
         } else {
 

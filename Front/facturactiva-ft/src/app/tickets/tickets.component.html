@@ -1,8 +1,8 @@
-42<div class="main-container">
+<div class="main-container">
   <!-- Barra superior ABCD-->
   <header class="header">
     <div class="logo-section">
-      <img src="/logo.png" alt="Logo Facturactiva" class="logo" />
+      <img src="/logo-facturactiva.png" alt="Logo Facturactiva" class="logo" />
     </div>
 
     <div class="search-section">
@@ -17,8 +17,10 @@
         <i class="fa-solid fa-bell"></i>
       </div>
       <div class="user-info">
-        <span class="user-name">Rodrigo Gallardo</span>
-        <span class="user-role">CLIENTE</span>
+        <div class="user-text">
+        <span class="user-name">{{ nombreUser }}</span>
+        <span class="user-role">{{ userRole }}</span>
+      </div>
         <div class="user-avatar">
           <i class="fa-solid fa-user"></i>
         </div>
@@ -32,15 +34,15 @@
     <aside class="sidebar">
       <div class="sidebar-title">PRINCIPAL</div>
       <ul>
-        <li class="active">
-          <i class="fa-solid fa-house"></i> Tickets
+        <li routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fa-solid fa-house"></i> Inicio
         </li>
-        <li>
+        <li routerLink="/tickets" routerLinkActive="active">
           <i class="fa-solid fa-ticket"></i> Ticket
         </li>
       </ul>
 
-      <div class="bottom">
+      <div class="bottom" (click)="logout()">
         <i class="fa-solid fa-right-from-bracket"></i> Salir
       </div>
     </aside>
@@ -50,7 +52,9 @@
       <div class="tickets-container">
         <div class="tickets-header">
           <h2>Mis Tickets</h2>
-          <button class="create-btn">Crear +</button>
+          <button class="create-btn" routerLink="/crearticket">
+            Crear + 
+          </button>
         </div>
         <div class="pagination">
           <button>&lt;</button>
