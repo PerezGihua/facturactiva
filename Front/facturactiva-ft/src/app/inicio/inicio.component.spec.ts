@@ -7,7 +7,7 @@ describe('InicioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InicioComponent]
+      imports: [InicioComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InicioComponent);
@@ -15,7 +15,12 @@ describe('InicioComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debería renderizar contenido HTML', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('h1')).toBeTruthy();
   });
 });

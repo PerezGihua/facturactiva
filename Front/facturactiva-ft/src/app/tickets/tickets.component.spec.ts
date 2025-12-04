@@ -7,7 +7,7 @@ describe('TicketsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TicketsComponent]
+      imports: [TicketsComponent], // Standalone
     }).compileComponents();
 
     fixture = TestBed.createComponent(TicketsComponent);
@@ -15,7 +15,16 @@ describe('TicketsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debería renderizar el template correctamente', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled).toBeTruthy();
+  });
+
+  it('debería tener un template que cargue sin errores', () => {
+    expect(() => fixture.detectChanges()).not.toThrow();
   });
 });

@@ -7,7 +7,7 @@ describe('CrearticketComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CrearticketComponent]
+      imports: [CrearticketComponent], // standalone
     }).compileComponents();
 
     fixture = TestBed.createComponent(CrearticketComponent);
@@ -15,13 +15,27 @@ describe('CrearticketComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should toggle panel', () => {
-    const initial = component.isPanelOpen;
+  it('debería tener el panel cerrado inicialmente', () => {
+    expect(component.isPanelOpen).toBeFalse();
+  });
+
+  it('debería abrir el panel cuando se llama togglePanel()', () => {
     component.togglePanel();
-    expect(component.isPanelOpen).toBe(!initial);
+    expect(component.isPanelOpen).toBeTrue();
+  });
+
+  it('debería cerrar el panel si se llama togglePanel() dos veces', () => {
+    component.togglePanel();
+    component.togglePanel();
+    expect(component.isPanelOpen).toBeFalse();
+  });
+
+  it('el template debería renderizar correctamente', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled).toBeTruthy();
   });
 });

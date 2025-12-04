@@ -1,6 +1,6 @@
-projectKey=proyecto-angular-2025
+projectKey=Proyecto-Facturactiva
 serverUrl=http://localhost:9000
 serverVersion=25.11.0.114957
-dashboardUrl=http://localhost:9000/dashboard?id=proyecto-angular-2025
-ceTaskId=2e0deaeb-909f-4da0-9e72-df0d54018223
-ceTaskUrl=http://localhost:9000/api/ce/task?id=2e0deaeb-909f-4da0-9e72-df0d54018223
+dashboardUrl=http://localhost:9000/dashboard?id=Proyecto-Facturactiva
+ceTaskId=cae8dffb-ff96-4d29-be53-d243bad22aad
+ceTaskUrl=http://localhost:9000/api/ce/task?id=cae8dffb-ff96-4d29-be53-d243bad22aad
