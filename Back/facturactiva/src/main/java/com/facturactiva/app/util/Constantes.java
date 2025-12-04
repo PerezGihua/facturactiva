@@ -2,8 +2,13 @@ package com.facturactiva.app.util;
 
 public class Constantes {
 
-    // ACCESOS PLATAFORMAS
+    // RUTAS
     public static final String FRONT_URL = "http://localhost:4200";
+    public static final String RUTA_LOGS = "C:/facturactiva/logs";
+    
+    // NOMBRE METODOS
+    public static final String METODO_AUTHENTICATE_USER= "[AUTENTICACION DE USUARIO]";
+    public static final String RUTA_LOGS = "C:/facturactiva/logs";
 
     // PARAMETROS DEL SP
     public static final String PARAM_USERNAME = "username";

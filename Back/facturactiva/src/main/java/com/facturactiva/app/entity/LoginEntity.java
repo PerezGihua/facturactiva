@@ -31,8 +31,6 @@ public class LoginEntity {
         
         Map<String, Object> result = spExecutor.execute(config);
         
-        System.out.println("Resultado completo: " + result);
-        
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> resultSet = (List<Map<String, Object>>) result.get(RESULT_SET_KEY);
         
