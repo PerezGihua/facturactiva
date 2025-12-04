@@ -19,12 +19,16 @@
     <name>facturactiva</name>
     <description>Sistema para facturactiva</description>
 
-    <properties>
-        <java.version>21</java.version>
-    </properties>
+	<properties>
+	    <java.version>21</java.version>
+	    <sonar.organization>tu-organizacion</sonar.organization>
+	    <sonar.host.url>http://localhost:9000</sonar.host.url>
+	    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+	    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
 
     <dependencies>
-        <!-- Spring Boot Web (SIN Logback) -->
+		<!-- Spring Boot Web (SIN Logback) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -36,7 +40,7 @@
             </exclusions>
         </dependency>
 
-        <!-- Spring Boot JDBC (SIN Logback) -->
+		<!-- Spring Boot JDBC (SIN Logback) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -48,20 +52,20 @@
             </exclusions>
         </dependency>
 
-        <!-- Log4j2 Starter (REEMPLAZA a Logback) -->
+		<!-- Log4j2 Starter (REEMPLAZA a Logback) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
-        <!-- Driver SQL Server -->
+		<!-- Driver SQL Server -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- DevTools (para desarrollo) -->
+		<!-- DevTools (para desarrollo) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -71,13 +75,40 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-        <finalName>${artifactId}</finalName>
-    </build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
 
+			<!-- Plugin de SonarQube -->
+        <plugin>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.11.0.3922</version>
+        </plugin>
+
+			<!-- Plugin para cobertura de código (JaCoCo) -->
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.11</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    <finalName>${artifactId}</finalName>
+</build>
 </project>

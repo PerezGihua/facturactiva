@@ -8,7 +8,6 @@ public class Constantes {
     
     // NOMBRE METODOS
     public static final String METODO_AUTHENTICATE_USER= "[AUTENTICACION DE USUARIO]";
-    public static final String RUTA_LOGS = "C:/facturactiva/logs";
 
     // PARAMETROS DEL SP
     public static final String PARAM_USERNAME = "username";
