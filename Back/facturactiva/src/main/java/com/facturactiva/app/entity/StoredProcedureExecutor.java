@@ -11,7 +11,9 @@ import com.facturactiva.app.dto.SpConfig;
 import com.facturactiva.app.dto.SpParameter;
 import com.facturactiva.app.util.UtilClass;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -68,17 +70,22 @@ public class StoredProcedureExecutor {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
             .withProcedureName(config.getProcedureName());
         
-        // Declarar todos los parámetros
+        // Crear lista de parámetros para declarar todos juntos
+        List<SqlParameter> sqlParameters = new ArrayList<>();
+        
         if (config.getParameters() != null && !config.getParameters().isEmpty()) {
             for (SpParameter param : config.getParameters()) {
                 if (param.isOutput()) {
-                    jdbcCall.declareParameters(new SqlOutParameter(param.getName(), param.getSqlType())
-                    );
+                    sqlParameters.add(new SqlOutParameter(param.getName(), param.getSqlType()));
                 } else {
-                    jdbcCall.declareParameters(new SqlParameter(param.getName(), param.getSqlType())
-                    );
+                    sqlParameters.add(new SqlParameter(param.getName(), param.getSqlType()));
                 }
             }
+        }
+        
+        // Declarar todos los parámetros de una sola vez
+        if (!sqlParameters.isEmpty()) {
+            jdbcCall.declareParameters(sqlParameters.toArray(new SqlParameter[0]));
         }
         
         // Preparar valores de parámetros
