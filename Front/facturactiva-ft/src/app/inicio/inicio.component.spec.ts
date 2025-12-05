@@ -1,23 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { InicioComponent } from './inicio.component';
 
-describe('IncioComponent', () => {
+describe('InicioComponent', () => {
   let component: InicioComponent;
   let fixture: ComponentFixture<InicioComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InicioComponent]
-    })
-    .compileComponents();
+      imports: [InicioComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(InicioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debería renderizar contenido HTML', () => {
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('h1')).toBeTruthy();
   });
 });

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATH">C:/facturactiva/logs</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Logs del SERVIDOR (Spring, Hibernate, etc.) -->
+        <RollingFile name="ServerLog"
+                     fileName="${LOG_PATH}/server.log"
+                     filePattern="${LOG_PATH}/archived/server-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- Logs de la APLICACIÓN (tus servicios) -->
+        <RollingFile name="ApplicationLog"
+                     fileName="${LOG_PATH}/application.log"
+                     filePattern="${LOG_PATH}/archived/application-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- Logs de ERRORES (todos los errores en un solo archivo) -->
+        <RollingFile name="ErrorLog"
+                     fileName="${LOG_PATH}/error.log"
+                     filePattern="${LOG_PATH}/archived/error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+        </RollingFile>
+
+        <!-- Logs de SQL (opcional, para queries de base de datos) -->
+        <RollingFile name="SqlLog"
+                     fileName="${LOG_PATH}/sql.log"
+                     filePattern="${LOG_PATH}/archived/sql-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="5MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Logger para TU APLICACIÓN (tus servicios, entities, controllers) -->
+        <Logger name="com.facturactiva.app" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ApplicationLog"/>
+            <AppenderRef ref="ErrorLog"/>
+        </Logger>
+
+        <!-- Logger para Spring Framework -->
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerLog"/>
+            <AppenderRef ref="ErrorLog"/>
+        </Logger>
+
+        <!-- Logger para Spring Boot -->
+        <Logger name="org.springframework.boot" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerLog"/>
+            <AppenderRef ref="ErrorLog"/>
+        </Logger>
+
+        <!-- Logger para Tomcat (servidor embebido) -->
+        <Logger name="org.apache.catalina" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerLog"/>
+        </Logger>
+
+        <!-- Logger para Hibernate (si lo usas) -->
+        <Logger name="org.hibernate" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerLog"/>
+        </Logger>
+
+        <!-- Logger para SQL Queries (opcional) -->
+        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SqlLog"/>
+        </Logger>
+
+        <!-- Logger para JDBC -->
+        <Logger name="org.springframework.jdbc" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SqlLog"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerLog"/>
+            <AppenderRef ref="ErrorLog"/>
+        </Root>
+    </Loggers>
+</Configuration>

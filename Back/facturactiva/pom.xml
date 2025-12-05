@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -11,28 +12,50 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.facturactivaAuth</groupId>
-    <artifactId>facturactivaAuth</artifactId>
+    <groupId>com.facturactiva</groupId>
+    <artifactId>facturactiva</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>facturactivaAuth</name>
-    <description>Sistema para facturactivaAuth</description>
+    <packaging>jar</packaging>
+    <name>facturactiva</name>
+    <description>Sistema para facturactiva</description>
 
-    <properties>
-        <java.version>21</java.version>
-    </properties>
+	<properties>
+	    <java.version>21</java.version>
+	    <sonar.organization>facturactiva</sonar.organization>
+	    <sonar.host.url>http://localhost:9000</sonar.host.url>
+	    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+	    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
 
     <dependencies>
-        <!-- Spring Boot Web -->
+        <!-- Spring Boot Web (SIN Logback) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Spring Boot JDBC -->
+        <!-- Spring Boot JDBC (SIN Logback) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Log4j2 Starter (REEMPLAZA a Logback) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
         <!-- Driver SQL Server -->
@@ -42,12 +65,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Log4j -->
-        <dependency>
-	        <groupId>org.apache.logging.log4j</groupId>
-	        <artifactId>log4j-core</artifactId>
-	        </dependency>
-
         <!-- DevTools (para desarrollo) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,16 +72,78 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        
+        <!-- Testing -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-test</artifactId>
+	        <scope>test</scope>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	    
+	    <!-- JUnit 5 -->
+	    <dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter</artifactId>
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <!-- Mockito -->
+	    <dependency>
+	        <groupId>org.mockito</groupId>
+	        <artifactId>mockito-core</artifactId>
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <!-- AssertJ (para assertions más legibles) -->
+	    <dependency>
+	        <groupId>org.assertj</groupId>
+	        <artifactId>assertj-core</artifactId>
+	        <scope>test</scope>
+	    </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-        <finalName>${artifactId}</finalName>
-    </build>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-maven-plugin</artifactId>
+	        </plugin>
+	        
+	        <!-- Plugin de SonarQube -->
+	        <plugin>
+	            <groupId>org.sonarsource.scanner.maven</groupId>
+	            <artifactId>sonar-maven-plugin</artifactId>
+	            <version>3.11.0.3922</version>
+	        </plugin>
+	        
+	        <!-- Plugin para cobertura de código (JaCoCo) -->
+	        <plugin>
+	            <groupId>org.jacoco</groupId>
+	            <artifactId>jacoco-maven-plugin</artifactId>
+	            <version>0.8.11</version>
+	            <executions>
+	                <execution>
+	                    <goals>
+	                        <goal>prepare-agent</goal>
+	                    </goals>
+	                </execution>
+	                <execution>
+	                    <id>report</id>
+	                    <phase>test</phase>
+	                    <goals>
+	                        <goal>report</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+	        </plugin>
+	    </plugins>
+	    <finalName>${artifactId}</finalName>
+	</build>
 
 </project>

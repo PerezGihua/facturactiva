@@ -12,10 +12,10 @@
         <!-- Usuario -->
         <label class="input-label">Usuario:</label>
         <div class="input-group">
-          <input type="email" formControlName="usuario" placeholder="info@provistatechnologies.com" />
-          <span class="icon">📧</span>
+          <input type="email" formControlName="usuario" placeholder="usuario@facturactiva.com" />
+          <span class="icon"><i class="fa-solid fa-envelope"></i></span>
         </div>
-        <div *ngIf="submitted && f['usuario'].errors" class="error">
+        <div *ngIf="(submitted || f['usuario'].touched) && f['usuario'].errors" class="error">
           <small *ngIf="f['usuario'].errors['required']">El usuario es requerido.</small>
           <small *ngIf="f['usuario'].errors['email']">Ingrese un correo válido.</small>
         </div>
@@ -24,15 +24,27 @@
         <label class="input-label">Contraseña:</label>
         <div class="input-group">
           <input type="password" formControlName="password" placeholder="Introduzca su contraseña" />
-          <span class="icon">🔒</span>
+          <span class="icon"><i class="fa-solid fa-lock"></i></span>
         </div>
-        <div *ngIf="submitted && f['password'].errors" class="error">
+        <div *ngIf="(submitted || f['password'].touched) && f['password'].errors" class="error">
           <small *ngIf="f['password'].errors['required']">La contraseña es requerida.</small>
         </div>
 
-        <a href="#" class="forgot">¿Olvidó su contraseña?</a>
+        <a href="#" class="forgot" (click)="openModal()">¿Olvidó su contraseña?</a>
         <button type="submit">Inicie sesión</button>
       </form>
     </div>
+  </div>
+</div>
+<div class="modal-backdrop" *ngIf="showModal"></div>
+<div class="modal-container" *ngIf="showModal">
+  <div class="modal-box">
+    <span class="modal-close" (click)="closeModal()">✖</span>
+    <h3>Soporte</h3>
+    <p>
+      Comunícate con<br>
+      <strong>soportefacturactiva&#64;gmail.com</strong><br>
+      para verificar tu problema.
+    </p>
   </div>
 </div>
