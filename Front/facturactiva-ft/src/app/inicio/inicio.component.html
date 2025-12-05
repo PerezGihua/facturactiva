@@ -2,23 +2,25 @@
   <!-- Barra superior -->
   <header class="header">
     <div class="logo-section">
-      <img src="/logo.png" alt="Logo Facturactiva" class="logo" />
+      <img src="/logo-facturactiva.png" alt="Logo Facturactiva" class="logo" />
     </div>
 
     <div class="search-section">
-  <div class="search-box">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
-  </div>
-</div>
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
+      </div>
+    </div>
 
     <div class="user-section">
       <div class="notification-icon">
         <i class="fa-solid fa-bell"></i>
       </div>
       <div class="user-info">
-        <span class="user-name">Rodrigo Gallardo</span>
-        <span class="user-role">CLIENTE</span>
+        <div class="user-text">
+          <span class="user-name">{{ nombreUser }}</span>
+          <span class="user-role">{{ userRole }}</span>
+        </div>
         <div class="user-avatar">
           <i class="fa-solid fa-user"></i>
         </div>
@@ -32,21 +34,22 @@
     <aside class="sidebar">
       <div class="sidebar-title">PRINCIPAL</div>
       <ul>
-        <li class="active">
+        <li routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <i class="fa-solid fa-house"></i> Inicio
         </li>
-        <li>
+        <li routerLink="/tickets" routerLinkActive="active">
           <i class="fa-solid fa-ticket"></i> Ticket
         </li>
       </ul>
 
-      <div class="bottom">
+      <div class="bottom" (click)="logout()">
         <i class="fa-solid fa-right-from-bracket"></i> Salir
       </div>
     </aside>
+
     <main class="main-content">
       <div class="welcome">
-        <img src="/arroba.png" alt="Arroba" class="arroba" />
+        <img src="/logo-arroba.png" alt="Arroba" class="arroba" />
         <h2>¡Bienvenido a Factur&#64;ctiva!</h2>
       </div>
     </main>

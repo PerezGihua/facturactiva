@@ -94,7 +94,7 @@ p {
 
 .input-group input {
   width: 100%;
-  padding: 10px 35px 10px 10px; /* espacio al final para el ícono */
+  padding: 10px 35px 10px 10px; 
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -148,4 +148,46 @@ button:hover {
   color: red;
   font-size: 12px;
   text-align: left;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  z-index: 10;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.modal-box {
+  background: #fff;
+  font-family: 'Poppins', sans-serif;
+  padding: 25px;
+  width: 320px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-close:hover {
+  color: #000;
 }
