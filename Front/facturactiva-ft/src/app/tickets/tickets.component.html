@@ -4,14 +4,12 @@
     <div class="logo-section">
       <img src="/logo-facturactiva.png" alt="Logo Facturactiva" class="logo" />
     </div>
-
     <div class="search-section">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
       </div>
     </div>
-
     <div class="user-section">
       <div class="notification-icon">
         <i class="fa-solid fa-bell"></i>
@@ -27,7 +25,6 @@
       </div>
     </div>
   </header>
-
   <!-- Contenedor principal -->
   <div class="content">
     <!-- Menú lateral -->
@@ -37,22 +34,20 @@
         <li routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <i class="fa-solid fa-house"></i> Inicio
         </li>
-        <li routerLink="/tickets" routerLinkActive="active">
+        <li routerLink="/tickets" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
           <i class="fa-solid fa-ticket"></i> Ticket
         </li>
       </ul>
-
       <div class="bottom" (click)="logout()">
         <i class="fa-solid fa-right-from-bracket"></i> Salir
       </div>
     </aside>
-
     <!-- Área central -->
     <main class="main-content">
       <div class="tickets-container">
         <div class="tickets-header">
           <h2>Mis Tickets</h2>
-          <button class="create-btn" routerLink="/crearticket">
+          <button class="create-btn" routerLink="/tickets/crear">
             Crear + 
           </button>
         </div>

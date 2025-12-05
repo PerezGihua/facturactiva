@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -14,6 +15,8 @@ export class CrearticketComponent implements OnInit {
   userRole: string = '';
 
   isPanelOpen = false;
+
+  constructor(private router: Router) {}
 
   togglePanel() {
     this.isPanelOpen = !this.isPanelOpen;
@@ -49,6 +52,11 @@ export class CrearticketComponent implements OnInit {
 
     }
 
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
 }

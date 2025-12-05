@@ -10,18 +10,15 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./tickets.component.css']
 })
 export class TicketsComponent implements OnInit {
-
   nombreUser: string = '';
   userRole: string = '';
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-
     this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
-
     const idRol = localStorage.getItem('idRol');
-
+    
     switch (idRol) {
       case '1':
         this.userRole = 'Cliente';
@@ -36,12 +33,10 @@ export class TicketsComponent implements OnInit {
         this.userRole = 'Usuario';
         break;
     }
-
   }
 
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
-
 }

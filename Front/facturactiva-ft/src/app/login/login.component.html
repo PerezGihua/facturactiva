@@ -8,6 +8,11 @@
       <img src="/logo-facturactiva.png" alt="facturactiva" class="logo" />
       <p>Inicie sesión en su cuenta.</p>
 
+      <!-- MENSAJE DE ERROR ARRIBA -->
+      <div *ngIf="errorMessage" class="error-message">
+        <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+      </div>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <!-- Usuario -->
         <label class="input-label">Usuario:</label>
@@ -30,13 +35,14 @@
           <small *ngIf="f['password'].errors['required']">La contraseña es requerida.</small>
         </div>
 
-        <a href="#" class="forgot" (click)="openModal()">¿Olvidó su contraseña?</a>
+        <span class="forgot" (click)="openModal()">¿Olvidó su contraseña?</span>
         <button type="submit">Inicie sesión</button>
       </form>
     </div>
   </div>
 </div>
-<div class="modal-backdrop" *ngIf="showModal"></div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
 <div class="modal-container" *ngIf="showModal">
   <div class="modal-box">
     <span class="modal-close" (click)="closeModal()">✖</span>
