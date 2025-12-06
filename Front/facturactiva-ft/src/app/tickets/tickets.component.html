@@ -1,5 +1,5 @@
 <div class="main-container">
-  <!-- Barra superior ABCD-->
+  <!-- Barra superior -->
   <header class="header">
     <div class="logo-section">
       <img src="/logo-facturactiva.png" alt="Logo Facturactiva" class="logo" />
@@ -16,15 +16,16 @@
       </div>
       <div class="user-info">
         <div class="user-text">
-        <span class="user-name">{{ nombreUser }}</span>
-        <span class="user-role">{{ userRole }}</span>
-      </div>
+          <span class="user-name">{{ nombreUser }}</span>
+          <span class="user-role">{{ userRole }}</span>
+        </div>
         <div class="user-avatar">
           <i class="fa-solid fa-user"></i>
         </div>
       </div>
     </div>
   </header>
+
   <!-- Contenedor principal -->
   <div class="content">
     <!-- Menú lateral -->
@@ -42,16 +43,89 @@
         <i class="fa-solid fa-right-from-bracket"></i> Salir
       </div>
     </aside>
+
     <!-- Área central -->
     <main class="main-content">
       <div class="tickets-container">
         <div class="tickets-header">
           <h2>Mis Tickets</h2>
           <button class="create-btn" routerLink="/tickets/crear">
-            Crear + 
+            Crear +
           </button>
         </div>
-        <div class="pagination">
+
+        <!-- TABLA DE TICKETS -->
+        <div class="table-container">
+          <table class="tickets-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="th-content">
+                    <span>Código</span>
+                    <i class="fa-solid fa-sort"></i>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <span>Asunto</span>
+                    <i class="fa-solid fa-sort"></i>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <span>Descripción</span>
+                    <i class="fa-solid fa-sort"></i>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <span>Fecha Creación</span>
+                    <i class="fa-solid fa-sort"></i>
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <span>Estado</span>
+                    <i class="fa-solid fa-sort"></i>
+                  </div>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ticket of tickets">
+                <td>
+                  <div class="codigo-cell">
+                    <i class="fa-solid {{ ticket.tipoIcono }} icon-documento"></i>
+                    <span>{{ ticket.codigo }}</span>
+                  </div>
+                </td>
+                <td>{{ ticket.asunto }}</td>
+                <td class="descripcion-cell">{{ ticket.descripcion }}</td>
+                <td>{{ ticket.fechaCreacion }}</td>
+                <td>
+                  <span class="estado-badge" [ngClass]="getEstadoClass(ticket.estado)">
+                    <i class="fa-solid fa-circle"></i>
+                    {{ ticket.estado }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-action btn-edit" (click)="editarTicket(ticket.codigo)">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn-action btn-delete" (click)="eliminarTicket(ticket.codigo)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINACIÓN (comentada por ahora) -->
+        <!-- <div class="pagination">
           <button>&lt;</button>
           <button class="active">1</button>
           <button>2</button>
@@ -59,7 +133,7 @@
           <span>...</span>
           <button>8</button>
           <button>&gt;</button>
-        </div>
+        </div> -->
       </div>
     </main>
   </div>

@@ -218,10 +218,8 @@ html, body {
 .main-content {
   flex: 1;
   background-color: #eeeeee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .welcome {
@@ -241,10 +239,11 @@ html, body {
 }
 
 .tickets-container {
-  text-align: center;
   font-family: "Roboto", sans-serif;
   width: 95%;
-  margin: -600px auto 0;
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 20px;
 }
 
 .tickets-header {
@@ -325,4 +324,163 @@ html, body {
   color: #666;
   font-size: 13px;
   margin: 0 4px;
+}
+
+/* ------------------------------------------------------ */
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tickets-table thead {
+  background-color: #f5f5f5;
+}
+
+.tickets-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.th-content i {
+  font-size: 12px;
+  color: #999;
+}
+
+.tickets-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.tickets-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.tickets-table td {
+  padding: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.codigo-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-documento {
+  font-size: 18px;
+  color: #ffc107;
+}
+
+.descripcion-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #666;
+}
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.estado-badge i {
+  font-size: 8px;
+}
+
+.estado-progreso {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.estado-progreso i {
+  color: #f57c00;
+}
+
+.estado-por-hacer {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.estado-por-hacer i {
+  color: #1976d2;
+}
+
+.estado-finalizado {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.estado-finalizado i {
+  color: #388e3c;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn-action {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+.btn-delete {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-action i {
+  font-size: 14px;
 }

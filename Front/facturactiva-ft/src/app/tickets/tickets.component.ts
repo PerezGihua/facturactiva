@@ -1,17 +1,55 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+interface Ticket {
+  codigo: string;
+  asunto: string;
+  descripcion: string;
+  fechaCreacion: string;
+  estado: string;
+  tipoIcono: string;
+}
 
 @Component({
   selector: 'app-tickets',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, CommonModule],
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
 })
 export class TicketsComponent implements OnInit {
   nombreUser: string = '';
   userRole: string = '';
+
+  // Datos de ejemplo (después los reemplazarás con tu backend)
+  tickets: Ticket[] = [
+    {
+      codigo: 'FA-314',
+      asunto: 'Factura no aceptada',
+      descripcion: 'Tengo una factura rechazada, la cual necesito s...',
+      fechaCreacion: '09/08/2025',
+      estado: 'En Progreso',
+      tipoIcono: 'fa-file-invoice'
+    },
+    {
+      codigo: 'FA-261',
+      asunto: 'Boleta Rechazada',
+      descripcion: 'Tengo una boleta rechazada, la cual necesito s...',
+      fechaCreacion: '27/03/2025',
+      estado: 'Por Hacer',
+      tipoIcono: 'fa-receipt'
+    },
+    {
+      codigo: 'FA-120',
+      asunto: 'Factura Rechazada',
+      descripcion: 'Tengo una factura rechazada, la cual necesito s...',
+      fechaCreacion: '17/05/2024',
+      estado: 'Finalizado',
+      tipoIcono: 'fa-file-invoice'
+    }
+  ];
 
   constructor(private router: Router) {}
 
@@ -38,5 +76,24 @@ export class TicketsComponent implements OnInit {
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);
+  }
+
+  editarTicket(codigo: string) {
+    console.log('Editar ticket:', codigo);
+    // Aquí implementarás la lógica de editar
+  }
+
+  eliminarTicket(codigo: string) {
+    console.log('Eliminar ticket:', codigo);
+    // Aquí implementarás la lógica de eliminar
+  }
+
+  getEstadoClass(estado: string): string {
+    switch(estado) {
+      case 'En Progreso': return 'estado-progreso';
+      case 'Por Hacer': return 'estado-por-hacer';
+      case 'Finalizado': return 'estado-finalizado';
+      default: return '';
+    }
   }
 }
