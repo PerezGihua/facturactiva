@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 interface Ticket {
   codigo: string;
@@ -20,10 +21,10 @@ interface Ticket {
   styleUrls: ['./tickets.component.css']
 })
 export class TicketsComponent implements OnInit {
+
   nombreUser: string = '';
   userRole: string = '';
 
-  // Datos de ejemplo (después los reemplazarás con tu backend)
   tickets: Ticket[] = [
     {
       codigo: 'FA-314',
@@ -51,12 +52,15 @@ export class TicketsComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+ 
+  constructor(public router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
+
     this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
+
     const idRol = localStorage.getItem('idRol');
-    
+
     switch (idRol) {
       case '1':
         this.userRole = 'Cliente';
@@ -71,6 +75,7 @@ export class TicketsComponent implements OnInit {
         this.userRole = 'Usuario';
         break;
     }
+
   }
 
   logout() {
@@ -79,21 +84,26 @@ export class TicketsComponent implements OnInit {
   }
 
   editarTicket(codigo: string) {
-    console.log('Editar ticket:', codigo);
-    // Aquí implementarás la lógica de editar
+    this.router.navigate(['editar', codigo], { relativeTo: this.route });
   }
 
   eliminarTicket(codigo: string) {
     console.log('Eliminar ticket:', codigo);
-    // Aquí implementarás la lógica de eliminar
   }
 
   getEstadoClass(estado: string): string {
-    switch(estado) {
-      case 'En Progreso': return 'estado-progreso';
-      case 'Por Hacer': return 'estado-por-hacer';
-      case 'Finalizado': return 'estado-finalizado';
-      default: return '';
+
+    switch (estado) {
+      case 'En Progreso':
+        return 'estado-progreso';
+      case 'Por Hacer':
+        return 'estado-por-hacer';
+      case 'Finalizado':
+        return 'estado-finalizado';
+      default:
+        return '';
     }
+
   }
+
 }

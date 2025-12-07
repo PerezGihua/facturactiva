@@ -16,11 +16,16 @@ export const routes: Routes = [
   {
     path: 'tickets',
     component: TicketsComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'tickets/crear',
-    component: CrearticketComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'crear',
+        component: CrearticketComponent
+      },
+      {
+        path: 'editar/:codigo',  // ← NUEVA RUTA para editar
+        component: CrearticketComponent
+      }
+    ]
   }
 ];

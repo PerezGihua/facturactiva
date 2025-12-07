@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -10,53 +10,33 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./crearticket.component.css']
 })
 export class CrearticketComponent implements OnInit {
+  
+  codigoTicket: string = '';
+  isEditMode: boolean = false;
 
-  nombreUser: string = '';
-  userRole: string = '';
-
-  isPanelOpen = false;
-
-  constructor(private router: Router) {}
-
-  togglePanel() {
-    this.isPanelOpen = !this.isPanelOpen;
-  }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-
-    if (typeof window !== 'undefined') {
-
-      this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
-
-      const idRol = localStorage.getItem('idRol');
-
-      switch (idRol) {
-
-        case '1':
-          this.userRole = 'Cliente';
-          break;
-
-        case '2':
-          this.userRole = 'Jefe de Soporte';
-          break;
-
-        case '3':
-          this.userRole = 'Agente de Soporte';
-          break;
-
-        default:
-          this.userRole = 'Usuario';
-          break;
-
+    // Detectar si viene el parámetro 'codigo' en la ruta
+    this.route.params.subscribe(params => {
+      if (params['codigo']) {
+        this.isEditMode = true;
+        this.codigoTicket = params['codigo'];
+        // Aquí cargarías los datos del ticket desde tu backend
+        this.cargarDatosTicket(this.codigoTicket);
+      } else {
+        this.isEditMode = false;
+        this.codigoTicket = '';
       }
-
-    }
-
+    });
   }
 
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/login']);
+  cargarDatosTicket(codigo: string) {
+    // TODO: Aquí llamarás a tu servicio para obtener los datos del ticket
+    console.log('Cargando datos del ticket:', codigo);
+    // Ejemplo:
+    // this.ticketService.getTicket(codigo).subscribe(data => {
+    //   // Llenar el formulario con los datos
+    // });
   }
-
 }

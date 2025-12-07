@@ -1,63 +1,10 @@
-<div class="main-container">
-
-  <header class="header">
-    <div class="logo-section">
-      <img src="/logo-facturactiva.png" alt="Logo Facturactiva" class="logo" />
-    </div>
-
-    <div class="search-section">
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
-      </div>
-    </div>
-
-    <div class="user-section">
-      <div class="notification-icon">
-        <i class="fa-solid fa-bell"></i>
-      </div>
-      <div class="user-info">
-        <div class="user-text">
-        <span class="user-name">{{ nombreUser }}</span>
-        <span class="user-role">{{ userRole }}</span>
-        <div class="user-avatar">
-          <i class="fa-solid fa-user"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-    <div class="overlay"></div>
-    <aside class="sidebar">
-      <div class="sidebar-title">PRINCIPAL</div>
-      <ul>
-        <li routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fa-solid fa-house"></i> Inicio
-        </li>
-        <li routerLink="/tickets" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
-          <i class="fa-solid fa-ticket"></i> Ticket
-        </li>
-      </ul>
-
-      <div class="bottom" (click)="logout()">
-        <i class="fa-solid fa-right-from-bracket"></i> Salir
-      </div>
-    </aside>
-
-    <main class="main-content">
-      <div class="tickets-container">
-        <div class="tickets-header">
-          <h2>Mis Tickets</h2>
-        </div>
-      </div>
-
 <div class="form-container">
   <div class="form-header">
     <h2 class="form-title">
-      <i class="fa-solid fa-list-ul"></i> Detalles
+      <i class="fa-solid fa-list-ul"></i>
+      {{ isEditMode ? codigoTicket : 'Detalles' }}
     </h2>
+
     <div class="close-box" routerLink="/tickets">
       <i class="fa-solid fa-xmark close-icon"></i>
     </div>
@@ -93,28 +40,26 @@
 
   <div class="form-group">
     <label for="estado">Estado:</label>
-  <input id="estado" type="text" placeholder="Ingrese estado" />
-</div>
+    <input id="estado" type="text" placeholder="Ingrese estado" />
+  </div>
 
   <div class="form-group">
     <label for="tipo">Tipo:</label>
     <select id="tipo">
-    <option value="" disabled selected>Elegir el tipo de documento</option>
-    <option value="Factura">Factura</option>
-    <option value="Boleta de venta">Boleta de venta</option>
-    <option value="Nota de credito">Nota de crédito</option>
-    <option value="Nota de debito">Nota de débito</option>
-    <option value="Comprobante de retencion">Comprobante de retención</option>
-    <option value="Guia de remision - Remitente">Guía de remisión - Remitente</option>
-    <option value="Guia de remision - Transportista">Guía de remisión - Transportista</option>
-    <option value="otros">Otros</option>
+      <option value="" disabled selected>Elegir el tipo de documento</option>
+      <option value="Factura">Factura</option>
+      <option value="Boleta de venta">Boleta de venta</option>
+      <option value="Nota de credito">Nota de crédito</option>
+      <option value="Nota de debito">Nota de débito</option>
+      <option value="Comprobante de retencion">Comprobante de retención</option>
+      <option value="Guia de remision - Remitente">Guía de remisión - Remitente</option>
+      <option value="Guia de remision - Transportista">Guía de remisión - Transportista</option>
+      <option value="otros">Otros</option>
     </select>
   </div>
+
   <div class="button-group">
     <button class="btn editar">Enviar</button>
     <button class="btn cerrar" routerLink="/tickets">Cerrar</button>
-         </div>
-      </div>
-    </main>
   </div>
 </div>
