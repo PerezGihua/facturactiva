@@ -1,38 +1,28 @@
 package com.facturactiva.app.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LoginResponse {
+    private String token;
+    private String tokenType = "Bearer";
+    private Integer idRol;
+    private String nombreCompleto;
+    private String email;
+    private String message;
 
-	private String idRol;
-	private String nombreUser;
-	private String message;
-	
-	public String getNombreUser() {
-		return nombreUser;
-	}
-
-	public void setNombreUser(String nombreUser) {
-		this.nombreUser = nombreUser;
-	}
-
-	public String getIdRol() {
-		return idRol;
-	}
-
-	public void setIdRol(String idRol) {
-		this.idRol = idRol;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public LoginResponse(String idRol, String nombreUser, String message) {
-		this.idRol = idRol;
-		this.nombreUser = nombreUser;
-		this.message = message;
-	}
+    public LoginResponse(String token, Integer idRol, String nombreCompleto, String email, String message) {
+        this.token = token;
+        this.tokenType = "Bearer";
+        this.idRol = idRol;
+        this.nombreCompleto = nombreCompleto;
+        this.email = email;
+        this.message = message;
+    }
 }

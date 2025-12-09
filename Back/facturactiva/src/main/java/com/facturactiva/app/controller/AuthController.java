@@ -1,24 +1,73 @@
 package com.facturactiva.app.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.facturactiva.app.dto.LoginRequest;
 import com.facturactiva.app.dto.LoginResponse;
-import com.facturactiva.app.service.FacturactivaService;
+import com.facturactiva.app.dto.RegisterRequest;
+import com.facturactiva.app.dto.RegisterResponse;
+import com.facturactiva.app.dto.UserDetailsDTO;
+import com.facturactiva.app.service.AuthService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Log4j2
 public class AuthController {
-    
-    private final FacturactivaService authService;
-    
-    @Autowired
-    public AuthController(FacturactivaService authService) {
-        this.authService = authService;
-    }
-    
+
+    private final AuthService authService;
+
+    /**
+     * Endpoint de login
+     * POST /api/auth/login
+     */
     @PostMapping("/login")
-    public LoginResponse validarLogin(@RequestBody LoginRequest request) {
-        return authService.authenticateUser(request);
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        log.info("Solicitud de login recibida para: {}", loginRequest.getEmail());
+        LoginResponse response = authService.login(loginRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Endpoint de registro
+     * POST /api/auth/register
+     */
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        log.info("Solicitud de registro recibida para: {}", registerRequest.getEmail());
+        RegisterResponse response = authService.register(registerRequest);
+        
+        if (response.getSuccess()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    /**
+     * Endpoint de logout
+     * POST /api/auth/logout
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout() {
+        log.info("Solicitud de logout recibida");
+        authService.logout();
+        return ResponseEntity.ok(Map.of("message", "Sesión cerrada exitosamente"));
+    }
+
+    /**
+     * Validar token actual
+     * GET /api/auth/validate
+     */
+    @GetMapping("/validate")
+    public ResponseEntity<Map<String, Boolean>> validateToken() {
+        log.debug("Validando token de usuario actual");
+        return ResponseEntity.ok(Map.of("valid", true));
     }
 }

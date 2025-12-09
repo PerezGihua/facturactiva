@@ -1,17 +1,8 @@
 package com.facturactiva.app.util;
 
 import java.sql.Types;
-import java.util.Base64;
 
 public class UtilClass {
-
-	// CODIFICA EN BASE64
-    public static String encode(String input) {
-        if (input == null || input.isEmpty()) {
-            return input;
-        }
-        return Base64.getEncoder().encodeToString(input.getBytes());
-    }
     
     // DETERMINA EL TIPO SQL BASADO EN EL TIPO DE OBJETO JAVA
     public static int getSqlType(Object value) {

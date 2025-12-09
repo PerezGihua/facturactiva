@@ -2,20 +2,27 @@
 <Configuration status="WARN">
     <Properties>
         <Property name="LOG_PATH">C:/facturactiva/logs</Property>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        
+        <!-- Pattern para LOGS DEL SERVIDOR (sin prefijo FACTURACTIVA) -->
+        <Property name="SERVER_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        
+        <!-- Pattern para LOGS DE LA APLICACIÓN (con prefijo FACTURACTIVA y línea) -->
+        <Property name="APP_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}.%M:%L [FACTURACTIVA] - %msg%n</Property>
     </Properties>
 
     <Appenders>
-        <!-- Console -->
+        <!-- Console CON COLORES -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %highlight{%-5level}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue} %style{%logger{36}}{cyan}%style{.%M:%L}{bright,cyan} %style{[FACTURACTIVA]}{bright,magenta} - %msg%n</Pattern>
+            </PatternLayout>
         </Console>
 
-        <!-- Logs del SERVIDOR (Spring, Hibernate, etc.) -->
+        <!-- Logs del SERVIDOR (Spring, Hibernate, etc.) - SIN prefijo FACTURACTIVA -->
         <RollingFile name="ServerLog"
                      fileName="${LOG_PATH}/server.log"
                      filePattern="${LOG_PATH}/archived/server-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout pattern="${SERVER_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -23,11 +30,11 @@
             <DefaultRolloverStrategy max="30"/>
         </RollingFile>
 
-        <!-- Logs de la APLICACIÓN (tus servicios) -->
+        <!-- Logs de la APLICACIÓN (tus servicios) - CON prefijo FACTURACTIVA -->
         <RollingFile name="ApplicationLog"
                      fileName="${LOG_PATH}/application.log"
                      filePattern="${LOG_PATH}/archived/application-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout pattern="${APP_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -39,7 +46,7 @@
         <RollingFile name="ErrorLog"
                      fileName="${LOG_PATH}/error.log"
                      filePattern="${LOG_PATH}/archived/error-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout pattern="${APP_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -52,63 +59,70 @@
         <RollingFile name="SqlLog"
                      fileName="${LOG_PATH}/sql.log"
                      filePattern="${LOG_PATH}/archived/sql-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <PatternLayout pattern="${APP_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="5MB"/>
             </Policies>
             <DefaultRolloverStrategy max="15"/>
         </RollingFile>
+        
+        <!-- Console para SERVIDOR (sin FACTURACTIVA) -->
+        <Console name="ServerConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${SERVER_LOG_PATTERN}"/>
+        </Console>
     </Appenders>
 
     <Loggers>
         <!-- Logger para TU APLICACIÓN (tus servicios, entities, controllers) -->
+        <!-- CON prefijo [FACTURACTIVA] y número de línea -->
         <Logger name="com.facturactiva.app" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="ApplicationLog"/>
             <AppenderRef ref="ErrorLog"/>
         </Logger>
 
-        <!-- Logger para Spring Framework -->
+        <!-- Logger para Spring Framework (SIN prefijo FACTURACTIVA) -->
         <Logger name="org.springframework" level="info" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerConsole"/>
             <AppenderRef ref="ServerLog"/>
             <AppenderRef ref="ErrorLog"/>
         </Logger>
 
-        <!-- Logger para Spring Boot -->
+        <!-- Logger para Spring Boot (SIN prefijo FACTURACTIVA) -->
         <Logger name="org.springframework.boot" level="info" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerConsole"/>
             <AppenderRef ref="ServerLog"/>
             <AppenderRef ref="ErrorLog"/>
         </Logger>
 
-        <!-- Logger para Tomcat (servidor embebido) -->
+        <!-- Logger para Tomcat (servidor embebido) (SIN prefijo FACTURACTIVA) -->
         <Logger name="org.apache.catalina" level="info" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerConsole"/>
             <AppenderRef ref="ServerLog"/>
         </Logger>
 
-        <!-- Logger para Hibernate (si lo usas) -->
+        <!-- Logger para Hibernate (si lo usas) (SIN prefijo FACTURACTIVA) -->
         <Logger name="org.hibernate" level="warn" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerConsole"/>
             <AppenderRef ref="ServerLog"/>
         </Logger>
 
-        <!-- Logger para SQL Queries (opcional) -->
+        <!-- Logger para SQL Queries (CON prefijo FACTURACTIVA) -->
         <Logger name="org.hibernate.SQL" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="SqlLog"/>
         </Logger>
 
-        <!-- Logger para JDBC -->
+        <!-- Logger para JDBC (CON prefijo FACTURACTIVA) -->
         <Logger name="org.springframework.jdbc" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="SqlLog"/>
         </Logger>
 
+        <!-- Root logger para todo lo demás (SIN prefijo FACTURACTIVA) -->
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="ServerConsole"/>
             <AppenderRef ref="ServerLog"/>
             <AppenderRef ref="ErrorLog"/>
         </Root>

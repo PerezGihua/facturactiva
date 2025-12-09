@@ -28,56 +28,113 @@
 	</properties>
 
     <dependencies>
-        <!-- Spring Boot Web (SIN Logback) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Spring Boot JDBC (SIN Logback) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Log4j2 Starter (REEMPLAZA a Logback) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!-- Driver SQL Server -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- DevTools (para desarrollo) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        
-        <!-- Testing -->
+	    <!-- Spring Boot Web (SIN Logback) -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-web</artifactId>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	
+	    <!-- Spring Boot JDBC (SIN Logback) -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-jdbc</artifactId>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	
+	    <!-- Spring Security (SIN Logback) -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-security</artifactId>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	
+	    <!-- Log4j2 Starter (REEMPLAZA a Logback) -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-log4j2</artifactId>
+	    </dependency>
+	
+	    <!-- JWT Dependencies -->
+	    <dependency>
+	        <groupId>io.jsonwebtoken</groupId>
+	        <artifactId>jjwt-api</artifactId>
+	        <version>0.11.5</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>io.jsonwebtoken</groupId>
+	        <artifactId>jjwt-impl</artifactId>
+	        <version>0.11.5</version>
+	        <scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>io.jsonwebtoken</groupId>
+	        <artifactId>jjwt-jackson</artifactId>
+	        <version>0.11.5</version>
+	        <scope>runtime</scope>
+	    </dependency>
+	
+		<!-- LOMBOK -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	
+	    <!-- Driver SQL Server -->
+	    <dependency>
+	        <groupId>com.microsoft.sqlserver</groupId>
+	        <artifactId>mssql-jdbc</artifactId>
+	        <scope>runtime</scope>
+	    </dependency>
+	
+	    <!-- DevTools (para desarrollo) -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-devtools</artifactId>
+	        <scope>runtime</scope>
+	        <optional>true</optional>
+	    </dependency>
+	    
+	    <!-- Testing -->
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-test</artifactId>
 	        <scope>test</scope>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-logging</artifactId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	    
+	    <!-- Spring Security Test -->
+	    <dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-test</artifactId>
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <!-- Validation -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-validation</artifactId>
 	        <exclusions>
 	            <exclusion>
 	                <groupId>org.springframework.boot</groupId>
@@ -105,6 +162,11 @@
 	        <groupId>org.assertj</groupId>
 	        <artifactId>assertj-core</artifactId>
 	        <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-configuration-processor</artifactId>
+	    	<optional>true</optional>
 	    </dependency>
     </dependencies>
 
