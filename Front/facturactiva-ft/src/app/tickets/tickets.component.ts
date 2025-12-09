@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 interface Ticket {
   codigo: string;
@@ -16,7 +17,7 @@ interface Ticket {
 @Component({
   selector: 'app-tickets',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, FormsModule],
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
 })
@@ -24,8 +25,9 @@ export class TicketsComponent implements OnInit {
 
   nombreUser: string = '';
   userRole: string = '';
+  searchTerm: string = '';
 
-  tickets: Ticket[] = [
+  ticketsOriginales: Ticket[] = [
     {
       codigo: 'FA-314',
       asunto: 'Factura no aceptada',
@@ -52,13 +54,14 @@ export class TicketsComponent implements OnInit {
     }
   ];
 
- 
+  tickets: Ticket[] = [];
+
   constructor(public router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
+    this.tickets = [...this.ticketsOriginales];
 
     this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
-
     const idRol = localStorage.getItem('idRol');
 
     switch (idRol) {
@@ -75,7 +78,24 @@ export class TicketsComponent implements OnInit {
         this.userRole = 'Usuario';
         break;
     }
+  }
 
+  // FILTRO EN TIEMPO REAL
+  filtrarTickets() {
+    if (!this.searchTerm.trim()) {
+      this.tickets = [...this.ticketsOriginales];
+      return;
+    }
+
+    const busqueda = this.searchTerm.toLowerCase();
+
+    this.tickets = this.ticketsOriginales.filter(ticket => 
+      ticket.codigo.toLowerCase().includes(busqueda) ||
+      ticket.asunto.toLowerCase().includes(busqueda) ||
+      ticket.descripcion.toLowerCase().includes(busqueda) ||
+      ticket.fechaCreacion.toLowerCase().includes(busqueda) ||
+      ticket.estado.toLowerCase().includes(busqueda)
+    );
   }
 
   logout() {
@@ -92,7 +112,6 @@ export class TicketsComponent implements OnInit {
   }
 
   getEstadoClass(estado: string): string {
-
     switch (estado) {
       case 'En Progreso':
         return 'estado-progreso';
@@ -103,7 +122,5 @@ export class TicketsComponent implements OnInit {
       default:
         return '';
     }
-
   }
-
 }

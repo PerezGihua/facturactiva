@@ -8,15 +8,16 @@
     <div class="search-section">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar en Factur&#64;ctiva" />
+        <input 
+          type="text" 
+          placeholder="Buscar en Factur&#64;ctiva"
+          [(ngModel)]="searchTerm"
+          (input)="filtrarTickets()"
+        />
       </div>
     </div>
 
     <div class="user-section">
-      <div class="notification-icon">
-        <i class="fa-solid fa-bell"></i>
-      </div>
-
       <div class="user-info">
         <div class="user-text">
           <span class="user-name">{{ nombreUser }}</span>
@@ -87,19 +88,28 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let ticket of tickets">
-                <td>
+              <!-- Mensaje si no hay resultados -->
+              <tr *ngIf="tickets.length === 0">
+                <td colspan="6" style="text-align: center; padding: 30px; color: #999;">
+                  No se encontraron tickets que coincidan con "{{ searchTerm }}"
+                </td>
+              </tr>
+
+              <!-- Lista de tickets filtrados -->
+              <tr *ngFor="let ticket of tickets" class="ticket-row">
+                <!-- Las celdas normales abren el editor al hacer click -->
+                <td (click)="editarTicket(ticket.codigo)">
                   <div class="codigo-cell">
                     <i class="fa-solid {{ ticket.tipoIcono }} icon-documento"></i>
                     <span>{{ ticket.codigo }}</span>
                   </div>
                 </td>
 
-                <td>{{ ticket.asunto }}</td>
-                <td class="descripcion-cell">{{ ticket.descripcion }}</td>
-                <td>{{ ticket.fechaCreacion }}</td>
+                <td (click)="editarTicket(ticket.codigo)">{{ ticket.asunto }}</td>
+                <td class="descripcion-cell" (click)="editarTicket(ticket.codigo)">{{ ticket.descripcion }}</td>
+                <td (click)="editarTicket(ticket.codigo)">{{ ticket.fechaCreacion }}</td>
 
-                <td>
+                <td (click)="editarTicket(ticket.codigo)">
                   <span
                     class="estado-badge"
                     [ngClass]="getEstadoClass(ticket.estado)"
@@ -109,18 +119,12 @@
                   </span>
                 </td>
 
+                <!-- Solo el botón de eliminar, sin el botón de editar -->
                 <td>
                   <div class="actions">
                     <button
-                      class="btn-action btn-edit"
-                      (click)="editarTicket(ticket.codigo)"
-                    >
-                      <i class="fa-solid fa-pen"></i>
-                    </button>
-
-                    <button
                       class="btn-action btn-delete"
-                      (click)="eliminarTicket(ticket.codigo)"
+                      (click)="eliminarTicket(ticket.codigo); $event.stopPropagation()"
                     >
                       <i class="fa-solid fa-trash"></i>
                     </button>
@@ -135,8 +139,8 @@
 
       <!-- OVERLAY (BLOQUEA TODO MENOS EL PANEL DERECHO) -->
       <div
-      class="overlay"
-      *ngIf="router.url.includes('/tickets/crear')"
+        class="overlay"
+        *ngIf="router.url.includes('/tickets/crear') || router.url.includes('/tickets/editar')"
       ></div>
 
       <!-- PANEL DERECHO -->

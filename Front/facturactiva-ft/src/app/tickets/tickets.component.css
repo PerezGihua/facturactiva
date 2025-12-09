@@ -495,3 +495,23 @@ html, body {
   padding: 20px;
   overflow-y: auto;
 }
+
+/* Hacer que las filas sean clickeables */
+.ticket-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ticket-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* Las celdas clickeables */
+.ticket-row td {
+  cursor: pointer;
+}
+
+/* Excepto la última columna (la de acciones) */
+.ticket-row td:last-child {
+  cursor: default;
+}

@@ -4,26 +4,40 @@
       <i class="fa-solid fa-list-ul"></i>
       {{ isEditMode ? codigoTicket : 'Detalles' }}
     </h2>
-
     <div class="close-box" routerLink="/tickets">
       <i class="fa-solid fa-xmark close-icon"></i>
     </div>
   </div>
-
+  
   <p class="form-subtitle">Ver todos los detalles disponibles</p>
-
+  
   <h3 class="form-section-title">Información principal</h3>
-
+  
   <div class="form-group">
     <label for="codigo">Código:</label>
-    <input id="codigo" type="text" placeholder="Ingrese código" />
+    <input 
+    id="codigo" 
+    type="text" 
+    [placeholder]="isEditMode ? '' : 'Se generará automáticamente'"
+    [(ngModel)]="codigo"
+    [disabled]="isEditMode"
+    />
   </div>
-
+  
   <div class="form-group">
     <label for="asunto">Asunto:</label>
     <input id="asunto" type="text" placeholder="Ingrese asunto" />
   </div>
-
+  
+  <div class="form-group">
+    <label for="tipo">Tipo:</label>
+    <select id="tipo">
+      <option value="" disabled selected>Elegir el tipo de documento</option>
+      <option value="Factura">Factura</option>
+      <option value="Boleta de venta">Boleta de venta</option>
+    </select>
+  </div>
+  
   <div class="form-group">
     <label for="descripcion">Descripción:</label>
     <textarea
@@ -33,29 +47,52 @@
     ></textarea>
   </div>
 
+  <!-- ÁREA DE SUBIR ARCHIVO -->
   <div class="form-group">
-    <label for="valor">Valor:</label>
-    <input id="valor" type="text" placeholder="Ingrese valor" />
-  </div>
+    <label>Adjuntar archivo:</label>
+    
+    <!-- Área de Drag & Drop -->
+    <div 
+      class="upload-area"
+      [class.dragging]="isDragging"
+      [class.has-file]="selectedFile"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="triggerFileInput()"
+    >
+      <!-- Input oculto -->
+      <input 
+        type="file" 
+        id="fileInput" 
+        accept="image/png"
+        (change)="onFileSelected($event)"
+        style="display: none;"
+      />
 
-  <div class="form-group">
-    <label for="estado">Estado:</label>
-    <input id="estado" type="text" placeholder="Ingrese estado" />
-  </div>
+      <!-- Si NO hay archivo -->
+      <div *ngIf="!selectedFile" class="upload-placeholder">
+        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+        <p class="upload-text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+        <p class="upload-hint">Solo archivos PNG (máx. 5MB)</p>
+      </div>
 
-  <div class="form-group">
-    <label for="tipo">Tipo:</label>
-    <select id="tipo">
-      <option value="" disabled selected>Elegir el tipo de documento</option>
-      <option value="Factura">Factura</option>
-      <option value="Boleta de venta">Boleta de venta</option>
-      <option value="Nota de credito">Nota de crédito</option>
-      <option value="Nota de debito">Nota de débito</option>
-      <option value="Comprobante de retencion">Comprobante de retención</option>
-      <option value="Guia de remision - Remitente">Guía de remisión - Remitente</option>
-      <option value="Guia de remision - Transportista">Guía de remisión - Transportista</option>
-      <option value="otros">Otros</option>
-    </select>
+      <!-- Si hay archivo seleccionado -->
+      <div *ngIf="selectedFile" class="file-preview">
+        <div class="file-info">
+        <i class="fa-solid fa-file-image file-icon"></i>
+          <span class="file-name">{{ selectedFile.name }}</span>
+          <span class="file-size">{{ (selectedFile.size / 1024).toFixed(2) }} KB</span>
+        </div>
+        <button 
+          type="button" 
+          class="remove-file-btn"
+          (click)="removeFile(); $event.stopPropagation()"
+        >
+          <i class="fa-solid fa-trash"></i>Eliminar
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="button-group">
