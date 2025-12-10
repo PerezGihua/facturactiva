@@ -13,6 +13,7 @@ import com.facturactiva.app.util.Constantes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,12 +83,18 @@ public class AuthServiceImpl implements AuthService {
                     Constantes.MSG_AUTH_SUCCESS
             );
 
+        } catch (BadCredentialsException e) {
+            // Capturar específicamente el error de credenciales incorrectas
+            log.warn("{} Credenciales incorrectas para: {}", 
+                    Constantes.METODO_LOGIN, loginRequest.getEmail());
+            throw new AuthException(Constantes.MSG_AUTH_FAILURE);
         } catch (AuthException e) {
-            log.error("{} Error de autenticación: {}", Constantes.METODO_LOGIN, e.getMessage());
+            // Re-lanzar excepciones de autenticación ya manejadas
             throw e;
         } catch (Exception e) {
-            log.error("{} Error durante la autenticación: {}", 
-                    Constantes.METODO_LOGIN, e.getMessage(), e);
+            // Capturar cualquier otro error inesperado
+            log.error("{} Error inesperado durante la autenticación para {}: {}", 
+                    Constantes.METODO_LOGIN, loginRequest.getEmail(), e.getMessage());
             throw new AuthException(Constantes.MSG_AUTH_FAILURE);
         }
     }

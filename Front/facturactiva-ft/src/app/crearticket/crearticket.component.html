@@ -14,36 +14,48 @@
   <h3 class="form-section-title">Información principal</h3>
   
   <div class="form-group">
-    <label for="codigo">Código:</label>
-    <input 
-    id="codigo" 
-    type="text" 
-    [placeholder]="isEditMode ? '' : 'Se generará automáticamente'"
-    [(ngModel)]="codigo"
-    [disabled]="isEditMode"
+    <label for="documento">Documento:</label>
+    <input
+      id="documento"
+      type="text"
+      placeholder="Número de documento rechazado"
+      [(ngModel)]="documento"
+      [disabled]="isSubmitting"
     />
   </div>
-  
+
   <div class="form-group">
     <label for="asunto">Asunto:</label>
-    <input id="asunto" type="text" placeholder="Ingrese asunto" />
+    <input
+      id="asunto"
+      type="text"
+      placeholder="Ingrese asunto"
+      [(ngModel)]="asunto"
+      [disabled]="isSubmitting"
+    />
   </div>
-  
+
   <div class="form-group">
     <label for="tipo">Tipo:</label>
-    <select id="tipo">
-      <option value="" disabled selected>Elegir el tipo de documento</option>
-      <option value="Factura">Factura</option>
-      <option value="Boleta de venta">Boleta de venta</option>
+    <select
+      id="tipo"
+      [(ngModel)]="tipo"
+      [disabled]="isSubmitting"
+    >
+      <option value="" disabled>Elegir el tipo de documento</option>
+      <option value="1">Factura</option>
+      <option value="2">Boleta de venta</option>
     </select>
   </div>
-  
+
   <div class="form-group">
     <label for="descripcion">Descripción:</label>
     <textarea
       id="descripcion"
       rows="3"
       placeholder="Describa el problema"
+      [(ngModel)]="descripcion"
+      [disabled]="isSubmitting"
     ></textarea>
   </div>
 
@@ -95,8 +107,25 @@
     </div>
   </div>
 
+  <!-- Mensaje de error -->
+  <div *ngIf="errorMessage" class="error-message" style="color: red; margin-bottom: 15px; padding: 10px; background-color: #ffebee; border-radius: 4px;">
+    {{ errorMessage }}
+  </div>
+
   <div class="button-group">
-    <button class="btn editar">Enviar</button>
-    <button class="btn cerrar" routerLink="/tickets">Cerrar</button>
+    <button
+      class="btn editar"
+      (click)="enviarTicket()"
+      [disabled]="isSubmitting"
+    >
+      {{ isSubmitting ? 'Enviando...' : 'Enviar' }}
+    </button>
+    <button
+      class="btn cerrar"
+      routerLink="/tickets"
+      [disabled]="isSubmitting"
+    >
+      Cerrar
+    </button>
   </div>
 </div>

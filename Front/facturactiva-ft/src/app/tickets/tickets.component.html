@@ -18,10 +18,10 @@
     </div>
 
     <div class="user-section">
-      <div class="user-info">
+          <div class="user-info" *ngIf="currentUser$ | async as user">
         <div class="user-text">
-          <span class="user-name">{{ nombreUser }}</span>
-          <span class="user-role">{{ userRole }}</span>
+          <span class="user-name">{{ utils.getShortName(user.nombreCompleto) }}</span>
+          <span class="user-role">{{ utils.getRolName(user.idRol) }}</span>
         </div>
 
         <div class="user-avatar">
@@ -75,12 +75,26 @@
 
         <!-- TABLA DE TICKETS -->
         <div class="table-container">
-          <table class="tickets-table">
+          <!-- Spinner mientras carga -->
+          <div *ngIf="isLoadingTickets" class="tickets-loading" style="text-align:center; padding:40px;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+            <div style="margin-top:10px; color:#666;">Cargando tickets...</div>
+          </div>
+
+          <!-- Mensaje de error al cargar -->
+          <div *ngIf="!isLoadingTickets && loadErrorMessage" class="tickets-error" style="text-align:center; padding:20px; color:#c0392b;">
+            <div>{{ loadErrorMessage }}</div>
+            <button class="create-btn" (click)="loadMyTickets()" style="margin-top:10px;">Reintentar</button>
+          </div>
+
+          <!-- Tabla cuando no hay carga ni error -->
+          <table *ngIf="!isLoadingTickets && !loadErrorMessage" class="tickets-table">
             <thead>
               <tr>
                 <th>Código</th>
                 <th>Asunto</th>
                 <th>Descripción</th>
+                <th>Documento</th>
                 <th>Fecha Creación</th>
                 <th>Estado</th>
                 <th></th>
@@ -100,13 +114,14 @@
                 <!-- Las celdas normales abren el editor al hacer click -->
                 <td (click)="editarTicket(ticket.codigo)">
                   <div class="codigo-cell">
-                    <i class="fa-solid {{ ticket.tipoIcono }} icon-documento"></i>
+                    <i class="fa-solid {{ ticket.tipoIcono }} icon-documento" [style.color]="getIconColor(ticket.tipoComprobante)"></i>
                     <span>{{ ticket.codigo }}</span>
                   </div>
                 </td>
 
                 <td (click)="editarTicket(ticket.codigo)">{{ ticket.asunto }}</td>
                 <td class="descripcion-cell" (click)="editarTicket(ticket.codigo)">{{ ticket.descripcion }}</td>
+                <td (click)="editarTicket(ticket.codigo)">{{ ticket.numDocRechazado || '-' }}</td>
                 <td (click)="editarTicket(ticket.codigo)">{{ ticket.fechaCreacion }}</td>
 
                 <td (click)="editarTicket(ticket.codigo)">

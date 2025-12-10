@@ -5,24 +5,30 @@
 
   <div class="right">
     <div class="login-box">
-      <img src="/logo-facturactiva.png" alt="facturactiva" class="logo" />
-      <p>Inicie sesión en su cuenta.</p>
-
-      <!-- MENSAJE DE ERROR ARRIBA -->
-      <div *ngIf="errorMessage" class="error-message">
-        <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+      <!-- Spinner mientras carga -->
+      <div *ngIf="isLoading" style="text-align:center; padding:40px;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div *ngIf="!isLoading">
+        <img src="/logo-facturactiva.png" alt="facturactiva" class="logo" />
+        <p>Inicie sesión en su cuenta.</p>
+
+        <!-- MENSAJE DE ERROR ARRIBA -->
+        <div *ngIf="errorMessage" class="error-message">
+          <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <!-- Usuario -->
-        <label class="input-label">Usuario:</label>
+        <label class="input-label">Usuario (Email):</label>
         <div class="input-group">
-          <input type="email" formControlName="usuario" placeholder="usuario@facturactiva.com" />
+          <input type="email" formControlName="email" placeholder="usuario@facturactiva.com" />
           <span class="icon"><i class="fa-solid fa-envelope"></i></span>
         </div>
-        <div *ngIf="(submitted || f['usuario'].touched) && f['usuario'].errors" class="error">
-          <small *ngIf="f['usuario'].errors['required']">El usuario es requerido.</small>
-          <small *ngIf="f['usuario'].errors['email']">Ingrese un correo válido.</small>
+        <div *ngIf="(submitted || f['email'].touched) && f['email'].errors" class="error">
+          <small *ngIf="f['email'].errors['required']">El usuario es requerido.</small>
+          <small *ngIf="f['email'].errors['email']">Ingrese un correo válido.</small>
         </div>
 
         <!-- Contraseña -->
@@ -36,8 +42,11 @@
         </div>
 
         <span class="forgot" (click)="openModal()">¿Olvidó su contraseña?</span>
-        <button type="submit">Inicie sesión</button>
-      </form>
+        <button type="submit" [disabled]="isLoading">
+          {{ isLoading ? 'Iniciando sesión...' : 'Inicie sesión' }}
+        </button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

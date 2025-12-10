@@ -12,16 +12,11 @@
       </div>
     </div>
 
-  <div class="user-section"> 
-    <!--
-      <div class="notification-icon">
-        <i class="fa-solid fa-bell"></i>
-      </div> 
-    -->
-      <div class="user-info">
+    <div class="user-section">
+      <div class="user-info" *ngIf="currentUser$ | async as user">
         <div class="user-text">
-          <span class="user-name">{{ nombreUser }}</span>
-          <span class="user-role">{{ userRole }}</span>
+          <span class="user-name">{{ utils.getShortName(user.nombreCompleto) }}</span>
+          <span class="user-role">{{ utils.getRolName(user.idRol) }}</span>
         </div>
         <div class="user-avatar">
           <i class="fa-solid fa-user"></i>
@@ -44,8 +39,8 @@
         </li>
       </ul>
 
-      <div class="bottom" (click)="logout()">
-        <i class="fa-solid fa-right-from-bracket"></i> Salir
+      <div class="bottom" (click)="logout()" [style.opacity]="isLoggingOut ? 0.5 : 1" [style.cursor]="isLoggingOut ? 'not-allowed' : 'pointer'">
+        <i class="fa-solid fa-right-from-bracket"></i> {{ isLoggingOut ? 'Saliendo...' : 'Salir' }}
       </div>
     </aside>
 

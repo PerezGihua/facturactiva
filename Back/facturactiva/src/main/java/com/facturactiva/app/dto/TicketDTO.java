@@ -16,6 +16,7 @@ public class TicketDTO {
     private String asunto;
     private String descripcion;
     private String numeroDocumentoRechazado;
+    private String rutaArchivo; // NUEVO CAMPO
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaActualizacion;
     private LocalDateTime fechaCierre;
@@ -25,4 +26,8 @@ public class TicketDTO {
     private String nombrePrioridad;
     private String nombreTipoComprobante;
     private String nombreAgente;
+    
+    // Para la creación desde el frontend
+    private Integer idTipoComprobante;
+    private Integer idPrioridad;
 }
