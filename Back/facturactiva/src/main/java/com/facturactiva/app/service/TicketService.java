@@ -8,6 +8,8 @@ import com.facturactiva.app.dto.TicketDTO;
 import java.util.List;
 
 public interface TicketService {
-    List<TicketDTO> obtenerTicketsPorUsuario(Integer usuarioId);
-    TicketDTO crearTicket(Integer usuarioId, CrearTicketRequest request, MultipartFile archivo);
+    
+	List<TicketDTO> obtenerTicketsPorUsuario();
+    
+    TicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo);
 }

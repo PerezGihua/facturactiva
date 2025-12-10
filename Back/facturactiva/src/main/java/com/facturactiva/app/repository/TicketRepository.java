@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import com.facturactiva.app.dto.TicketDTO;
@@ -37,10 +39,10 @@ public class TicketRepository {
                         rs.getTimestamp("fecha_ultima_actualizacion").toLocalDateTime() : null)
                     .fechaCierre(rs.getTimestamp("fecha_cierre") != null ? 
                         rs.getTimestamp("fecha_cierre").toLocalDateTime() : null)
-                    .nombreEstado(rs.getString("nombre_estado"))
-                    .nombrePrioridad(rs.getString("nombre_prioridad"))
-                    .nombreTipoComprobante(rs.getString("nombre_tipo_comprobante"))
-                    .nombreAgente(rs.getString("nombre_agente"))
+                    .estado(rs.getString("nombre_estado"))
+                    .prioridad(rs.getString("nombre_prioridad"))
+                    .tipoComprobante(rs.getString("nombre_tipo_comprobante"))
+                    .agente(rs.getString("nombre_agente"))
                     .build();
         }
     };
@@ -90,5 +92,19 @@ public class TicketRepository {
         List<TicketDTO> tickets = (List<TicketDTO>) result.get("ticket_creado");
         
         return tickets != null && !tickets.isEmpty() ? tickets.get(0) : null;
+    }
+    
+    public Integer obtenerUsuarioIdDelToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        
+        String sql = "SELECT id_usuario FROM Usuarios WHERE email = ?";
+        Integer usuarioId = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        
+        if (usuarioId == null) {
+            throw new RuntimeException("Usuario no encontrado: " + email);
+        }
+        
+        return usuarioId;
     }
 }

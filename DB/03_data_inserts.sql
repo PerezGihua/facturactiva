@@ -40,14 +40,25 @@ INSERT INTO TiposComprobante (nombre_comprobante) VALUES
 ('Guía de Remisión - Transportista');
 GO
 
--- =============================================
+-- ===========================  ==================
 -- 9. INSERTS DE USUARIOS
 -- =============================================
 INSERT INTO usuarios (id_rol, email, password_hash, nombres, apellidos, fecha_registro, activo) VALUES
-(1, 'admin@facturactiva.com', 'YWRtaW4xMjM=', 'Juan Carlos', 'Administrador Sistema', '2025-10-17 00:29:43.3795700 -05:00', 1), -- admin123
-(2, 'jefe@facturactiva.com', 'amVmZTEyMw==', 'Maria Elena', 'Supervisor García', '2025-10-17 00:29:43.4001313 -05:00', 1), -- jefe123
-(3, 'agente1@facturactiva.com', 'YWdlbnRlMTIz', 'Carlos Alberto', 'Técnico Pérez', '2025-10-17 00:29:43.4011286 -05:00', 1); -- agente123
+(1, 'cliente@facturactiva.com', 'Y2xpZW50ZTEyMw==', 'Juan Carlos', 'Quispe', SYSDATETIME(), 1), -- cliente123
+(2, 'jefeSoporte@facturactiva.com', 'amVmZTEyMw==', 'Maria Elena', 'Mamani', SYSDATETIME(), 1), -- jefe123
+(3, 'soporte@facturactiva.com', 'c29wb3J0ZTEyMw==', 'Carlos Alberto', 'Pérez', SYSDATETIME(), 1); -- soporte123
 GO
+
+-- Tickets
+-- Factura rechazada
+INSERT INTO Tickets (id_usuario_cliente, id_estado, id_prioridad, id_tipo_comprobante, asunto, descripcion, numero_documento_rechazado, fecha_creacion, fecha_ultima_actualizacion)
+VALUES ((SELECT id_usuario FROM Usuarios WHERE email = 'miguelperez@facturactiva.com'), 1, 3, 1, 'Factura rechazada por SUNAT', 'Error 2335 en factura F001-00001234', 'F001-00001234', GETDATE(), GETDATE());
+-- Consulta sobre anulación
+INSERT INTO Tickets (id_usuario_cliente, id_estado, id_prioridad, id_tipo_comprobante, asunto, descripcion, fecha_creacion, fecha_ultima_actualizacion)
+VALUES ((SELECT id_usuario FROM Usuarios WHERE email = 'miguelperez@facturactiva.com'), 1, 2, 2, 'Consulta sobre anulación de boleta', '¿Cómo puedo anular una boleta emitida hace 2 días?', GETDATE(), GETDATE());
+-- Problema con emisión
+INSERT INTO Tickets (id_usuario_cliente, id_estado, id_prioridad, id_tipo_comprobante, asunto, descripcion, fecha_creacion, fecha_ultima_actualizacion)
+VALUES ((SELECT id_usuario FROM Usuarios WHERE email = 'miguelperez@facturactiva.com'), 2, 1, 1, 'No puedo emitir facturas', 'El sistema me muestra error al intentar emitir facturas desde esta mañana', GETDATE(), GETDATE());
 
 -- =============================================
 -- CONSULTAS DE VERIFICACIÓN
@@ -60,11 +71,9 @@ SELECT 'Estados', COUNT(*) FROM Estados
 UNION ALL
 SELECT 'Prioridades', COUNT(*) FROM Prioridades
 UNION ALL
-SELECT 'TiposComprobante', COUNT(*) FROM TiposComprobante;
-GO
-
--- Verificar usuarios insertados
-SELECT 'Usuarios' AS Tabla, COUNT(*) AS Total FROM Usuarios;
+SELECT 'TiposComprobante', COUNT(*) FROM TiposComprobante
+UNION ALL
+SELECT 'Usuarios', COUNT(*) FROM Usuarios;
 GO
 
 -- Consulta para ver usuarios y sus roles
@@ -80,21 +89,38 @@ ORDER BY u.id_usuario;
 GO
 
 -- =============================================
--- CONSULTAS DE EJEMPLO PARA PROBAR
+-- ACTUALIZACIONES
 -- =============================================
+-- Actualizar contraseña de cliente@facturactiva.com (cliente123)
+UPDATE Usuarios 
+SET password_hash = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy' 
+WHERE id_usuario = 4;
 
--- 1. Ver todos los estados disponibles
+-- Actualizar contraseña de jefeSoporte@facturactiva.com (jefe123)
+UPDATE Usuarios 
+SET password_hash = '$2a$10$Q5ZQz4Ln8.T7.8y5U0Z8WOqmVq2h5YKw3JQE5W4rX6xF8jC9B0hKW' 
+WHERE id_usuario = 5;
+
+-- Actualizar contraseña de soporte@facturactiva.com (soporte123)
+UPDATE Usuarios 
+SET password_hash = '$2a$10$8K1p/8jE4LqKfVKr7TZ9sO5F7V4aA1J2h6V5X9cG4L7vZ8W3yB9nO' 
+WHERE id_usuario = 6;
+
+-- Verificar que se actualizaron correctamente
+SELECT id_usuario, email, LEFT(password_hash, 20) as password_preview 
+FROM Usuarios 
+WHERE id_usuario IN (4, 5, 6);
+
+ALTER TABLE Tickets
+ADD ruta_archivo VARCHAR(500) NULL;
+
+-- =============================================
+-- CONSULTAS
+-- =============================================
 SELECT * FROM Estados ORDER BY id_estado;
-
--- 2. Ver todos los tipos de comprobante
 SELECT * FROM TiposComprobante ORDER BY id_comprobante;
-
--- 3. Ver todas las prioridades
 SELECT * FROM Prioridades ORDER BY nivel;
 
--- 4. Probar las vistas (una vez se hayan creado tickets)
-/*
-SELECT * FROM VW_TicketsPorAgente;
-SELECT * FROM VW_TiempoPromedioSolucion;
-SELECT * FROM VW_TicketsPorCliente;
-*/
+SELECT * FROM Roles ORDER BY id_rol;
+SELECT * FROM Usuarios ORDER BY id_usuario;
+SELECT * FROM Tickets ORDER BY id_ticket;

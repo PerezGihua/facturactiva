@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TicketsService } from '../../services/tickets.service';
 import { AuthService, AuthUser } from '../../services/auth.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { UserUtilsService } from '../../services/user-utils.service';
 // import { AuthService } from '../../services/auth.service';
 
@@ -29,57 +30,36 @@ interface Ticket {
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
 })
-export class TicketsComponent implements OnInit {
+export class TicketsComponent implements OnInit, OnDestroy {
 
   nombreUser: string = '';
   userRole: string = '';
   searchTerm: string = '';
   currentUser$: Observable<AuthUser | null>;
 
-  ticketsOriginales: Ticket[] = [
-    {
-      codigo: 'FA-314',
-      asunto: 'Factura no aceptada',
-      descripcion: 'Tengo una factura rechazada, la cual necesito s...',
-      fechaCreacion: '09/08/2025',
-      estado: 'En Progreso',
-      tipoIcono: 'fa-file-invoice',
-      tipoComprobante: 'factura',
-      idTicket: 314
-    },
-    {
-      codigo: 'FA-261',
-      asunto: 'Boleta Rechazada',
-      descripcion: 'Tengo una boleta rechazada, la cual necesito s...',
-      fechaCreacion: '27/03/2025',
-      estado: 'Por Hacer',
-      tipoIcono: 'fa-receipt',
-      tipoComprobante: 'boleta',
-      idTicket: 261
-    },
-    {
-      codigo: 'FA-120',
-      asunto: 'Factura Rechazada',
-      descripcion: 'Tengo una factura rechazada, la cual necesito s...',
-      fechaCreacion: '17/05/2024',
-      estado: 'Finalizado',
-      tipoIcono: 'fa-file-invoice',
-      tipoComprobante: 'factura',
-      idTicket: 120
-    }
-  ];
+  ticketsOriginales: Ticket[] = [];
 
   tickets: Ticket[] = [];
   isLoadingTickets = false;
   loadErrorMessage: string = '';
 
+  private navigationSubscription: Subscription;
+
   constructor(public router: Router, private route: ActivatedRoute, private ticketsService: TicketsService, private authService: AuthService, public utils: UserUtilsService) {
     this.currentUser$ = this.authService.currentUser$;
+
+    // Suscribirse a los eventos de navegación
+    this.navigationSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Recargar tickets cuando se navega de vuelta a /tickets
+      if (event.url === '/tickets') {
+        this.loadMyTickets();
+      }
+    });
   }
 
   ngOnInit() {
-    this.tickets = [...this.ticketsOriginales];
-
     this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
     const idRol = localStorage.getItem('idRol');
 
@@ -97,7 +77,6 @@ export class TicketsComponent implements OnInit {
         this.userRole = 'Usuario';
         break;
     }
-    // Intentar cargar tickets reales desde el backend
     this.loadMyTickets();
   }
 
@@ -113,18 +92,18 @@ export class TicketsComponent implements OnInit {
       next: (res) => {
         try {
           const mapped = res.map(item => ({
-            codigo: item.idTicket ? this.formatTicketCode(item.idTicket, item.tipoComprobante) : (item.numDocRechazado || 'N/A'),
+            codigo: item.idTicket ? this.formatTicketCode(item.idTicket, item.tipoComprobante) : (item.numeroDocumentoRechazado || 'N/A'),
             asunto: item.asunto,
             descripcion: item.descripcion,
-            numDocRechazado: item.numDocRechazado || '',
+            numDocRechazado: item.numeroDocumentoRechazado || '',
             fechaCreacion: this.formatDate(item.fechaCreacion),
             estado: this.mapEstado(item.estado),
             tipoIcono: this.mapTipoIcono(item.tipoComprobante),
-            tipoComprobante: item.tipoComprobante || ''
+            tipoComprobante: item.tipoComprobante || '',
+            idTicket: item.idTicket
           } as Ticket));
 
           this.ticketsOriginales = mapped;
-          // ordenar por id ascendente
           this.sortTicketsAscending();
           this.tickets = [...this.ticketsOriginales];
         } catch (e) {
@@ -135,10 +114,9 @@ export class TicketsComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('No se pudo cargar tickets desde backend, usando datos locales.', err);
+        console.error('No se pudo cargar tickets desde backend.', err);
         this.loadErrorMessage = err?.error?.message || 'No se pudo cargar sus tickets. Intente nuevamente.';
         this.isLoadingTickets = false;
-        // keep static ticketsOriginales
       }
     });
   }
@@ -256,6 +234,13 @@ export class TicketsComponent implements OnInit {
         return 'estado-finalizado';
       default:
         return '';
+    }
+  }
+
+  ngOnDestroy() {
+    // Limpiar la suscripción al destruir el componente
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
     }
   }
 }

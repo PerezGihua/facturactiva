@@ -20,10 +20,15 @@ export class TicketsService {
   }
 
   /**
-   * Crea un nuevo ticket con FormData (documento, asunto, tipo, descripcion, archivo)
-   * El interceptor agregará automáticamente el token de autorización
+   * Crea un nuevo ticket.
+   * @param ticketData - Datos del ticket (documento, asunto, tipo, descripcion, archivo)
+   * @param token - Token de autenticación
    */
-  createTicket(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/tickets`, formData);
+  createTicket(ticketData: FormData, token?: string): Observable<any> {
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return this.http.post<any>(`${this.baseUrl}/tickets`, ticketData, { headers });
   }
 }

@@ -68,7 +68,7 @@ CREATE TABLE Tickets (
     id_usuario_cliente INT NOT NULL,
     id_usuario_agente INT NULL,
     id_usuario_jefe INT NULL,
-    -- Clasificaci n
+    -- Clasificacion
     id_estado INT NOT NULL,
     id_prioridad INT NOT NULL,
     id_tipo_comprobante INT NOT NULL,

@@ -22,10 +22,10 @@ public class TicketDTO {
     private LocalDateTime fechaCierre;
     
     // Información de catálogos
-    private String nombreEstado;
-    private String nombrePrioridad;
-    private String nombreTipoComprobante;
-    private String nombreAgente;
+    private String estado;
+    private String prioridad;
+    private String tipoComprobante;
+    private String agente;
     
     // Para la creación desde el frontend
     private Integer idTipoComprobante;

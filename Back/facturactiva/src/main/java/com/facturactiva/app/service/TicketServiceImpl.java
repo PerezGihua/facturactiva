@@ -19,20 +19,20 @@ public class TicketServiceImpl implements TicketService {
     private final FileStorageService fileStorageService;
     
     @Override
-    public List<TicketDTO> obtenerTicketsPorUsuario(Integer usuarioId) {
+    public List<TicketDTO> obtenerTicketsPorUsuario() {
+    	Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
         return ticketRepository.obtenerTicketsPorUsuario(usuarioId);
     }
     
     @Override
-    public TicketDTO crearTicket(Integer usuarioId, CrearTicketRequest request, MultipartFile archivo) {
+    public TicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo) {
         try {
-            // Guardar archivo si existe
+            Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
             String rutaArchivo = null;
             if (archivo != null && !archivo.isEmpty()) {
                 rutaArchivo = fileStorageService.guardarArchivo(archivo, usuarioId);
             }
             
-            // Crear DTO para el repository
             TicketDTO ticketDTO = TicketDTO.builder()
                     .asunto(request.getAsunto())
                     .descripcion(request.getDescripcion())
@@ -41,7 +41,6 @@ public class TicketServiceImpl implements TicketService {
                     .idPrioridad(2) // MEDIA por defecto
                     .build();
             
-            // Guardar en BD
             return ticketRepository.crearTicketConArchivo(usuarioId, ticketDTO, rutaArchivo);
             
         } catch (IOException e) {

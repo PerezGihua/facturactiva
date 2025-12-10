@@ -18,9 +18,9 @@ export class CrearticketComponent implements OnInit {
   isEditMode: boolean = false;
 
   // Variables para el formulario
-  documento: string = '';
+  codigo: string = '';
   asunto: string = '';
-  tipo: string = '1';
+  tipo: string = '';
   descripcion: string = '';
 
   // Variables para el archivo
@@ -28,9 +28,10 @@ export class CrearticketComponent implements OnInit {
   previewUrl: string | null = null;
   isDragging: boolean = false;
 
-  // Estados de carga y error
+  // Variables de estado
   isSubmitting: boolean = false;
   errorMessage: string = '';
+  successMessage: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -47,13 +48,22 @@ export class CrearticketComponent implements OnInit {
       } else {
         this.isEditMode = false;
         this.codigoTicket = '';
+        this.codigo = '';
       }
     });
   }
 
   cargarDatosTicket(codigo: string) {
     console.log('Cargando datos del ticket:', codigo);
-    // TODO: Implementar cuando exista endpoint de edición
+
+    // TODO: Aquí cuando tengas backend, harás la petición real
+    // Por ahora simulamos que cargamos los datos
+    this.codigo = codigo;
+
+    // Ejemplo de cómo cargarías los otros datos:
+    // this.asunto = 'Factura no aceptada';
+    // this.tipo = 'Factura';
+    // this.descripcion = 'Tengo una factura rechazada...';
   }
 
   // Manejar cuando se arrastra un archivo sobre el área
@@ -127,39 +137,36 @@ export class CrearticketComponent implements OnInit {
     fileInput?.click();
   }
 
-  // Enviar el formulario
-  enviarTicket() {
+  // Enviar formulario
+  onSubmit() {
+    // Limpiar mensajes previos
     this.errorMessage = '';
-
-    // Verificar token antes de enviar
-    const token = localStorage.getItem('token');
-    console.log('Token actual:', token ? 'Existe' : 'No existe');
-    console.log('Token value:', token);
+    this.successMessage = '';
 
     // Validaciones
-    if (!this.documento.trim()) {
-      this.errorMessage = 'El número de documento es obligatorio';
+    if (!this.codigo.trim()) {
+      this.errorMessage = 'El número de documento es requerido';
       return;
     }
 
     if (!this.asunto.trim()) {
-      this.errorMessage = 'El asunto es obligatorio';
+      this.errorMessage = 'El asunto es requerido';
       return;
     }
 
     if (!this.tipo) {
-      this.errorMessage = 'El tipo de documento es obligatorio';
+      this.errorMessage = 'El tipo de comprobante es requerido';
       return;
     }
 
     if (!this.descripcion.trim()) {
-      this.errorMessage = 'La descripción es obligatoria';
+      this.errorMessage = 'La descripción es requerida';
       return;
     }
 
-    // Crear FormData
+    // Preparar FormData
     const formData = new FormData();
-    formData.append('documento', this.documento);
+    formData.append('documento', this.codigo);
     formData.append('asunto', this.asunto);
     formData.append('tipo', this.tipo);
     formData.append('descripcion', this.descripcion);
@@ -169,30 +176,38 @@ export class CrearticketComponent implements OnInit {
       formData.append('archivo', this.selectedFile);
     }
 
-    console.log('Datos a enviar:', {
-      documento: this.documento,
-      asunto: this.asunto,
-      tipo: this.tipo,
-      descripcion: this.descripcion,
-      archivo: this.selectedFile?.name
-    });
+    // Obtener token
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     // Enviar al backend
     this.isSubmitting = true;
-    this.ticketsService.createTicket(formData).subscribe({
+
+    this.ticketsService.createTicket(formData, token || undefined).subscribe({
       next: (response) => {
         console.log('Ticket creado exitosamente:', response);
         this.isSubmitting = false;
-        // Redirigir a la lista de tickets
+
+        // Limpiar formulario
+        this.resetForm();
+
+        // Redirigir inmediatamente a la lista de tickets para que se recargue
         this.router.navigate(['/tickets']);
       },
       error: (error) => {
-        console.error('Error completo al crear ticket:', error);
-        console.error('Status:', error.status);
-        console.error('Error body:', error.error);
+        console.error('Error al crear ticket:', error);
+        this.errorMessage = error?.error?.message || 'Error al crear el ticket. Por favor, intente nuevamente.';
         this.isSubmitting = false;
-        this.errorMessage = error.error?.message || error.error?.error || 'Error al crear el ticket. Intente nuevamente.';
       }
     });
+  }
+
+  // Resetear formulario
+  resetForm() {
+    this.codigo = '';
+    this.asunto = '';
+    this.tipo = '';
+    this.descripcion = '';
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
 }

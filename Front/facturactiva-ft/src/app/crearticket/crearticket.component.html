@@ -8,18 +8,26 @@
       <i class="fa-solid fa-xmark close-icon"></i>
     </div>
   </div>
-  
+
   <p class="form-subtitle">Ver todos los detalles disponibles</p>
-  
+
   <h3 class="form-section-title">Información principal</h3>
-  
+
+  <!-- Mensajes de error y éxito -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="fa-solid fa-circle-exclamation"></i> {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fa-solid fa-circle-check"></i> {{ successMessage }}
+  </div>
+
   <div class="form-group">
     <label for="documento">Documento:</label>
     <input
       id="documento"
       type="text"
-      placeholder="Número de documento rechazado"
-      [(ngModel)]="documento"
+      placeholder="Número de documento rechazado (ej: F001-00005678)"
+      [(ngModel)]="codigo"
       [disabled]="isSubmitting"
     />
   </div>
@@ -42,7 +50,7 @@
       [(ngModel)]="tipo"
       [disabled]="isSubmitting"
     >
-      <option value="" disabled>Elegir el tipo de documento</option>
+      <option value="" disabled selected>Elegir el tipo de documento</option>
       <option value="1">Factura</option>
       <option value="2">Boleta de venta</option>
     </select>
@@ -62,9 +70,9 @@
   <!-- ÁREA DE SUBIR ARCHIVO -->
   <div class="form-group">
     <label>Adjuntar archivo:</label>
-    
+
     <!-- Área de Drag & Drop -->
-    <div 
+    <div
       class="upload-area"
       [class.dragging]="isDragging"
       [class.has-file]="selectedFile"
@@ -74,9 +82,9 @@
       (click)="triggerFileInput()"
     >
       <!-- Input oculto -->
-      <input 
-        type="file" 
-        id="fileInput" 
+      <input
+        type="file"
+        id="fileInput"
         accept="image/png"
         (change)="onFileSelected($event)"
         style="display: none;"
@@ -96,8 +104,8 @@
           <span class="file-name">{{ selectedFile.name }}</span>
           <span class="file-size">{{ (selectedFile.size / 1024).toFixed(2) }} KB</span>
         </div>
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="remove-file-btn"
           (click)="removeFile(); $event.stopPropagation()"
         >
@@ -107,17 +115,13 @@
     </div>
   </div>
 
-  <!-- Mensaje de error -->
-  <div *ngIf="errorMessage" class="error-message" style="color: red; margin-bottom: 15px; padding: 10px; background-color: #ffebee; border-radius: 4px;">
-    {{ errorMessage }}
-  </div>
-
   <div class="button-group">
     <button
       class="btn editar"
-      (click)="enviarTicket()"
+      (click)="onSubmit()"
       [disabled]="isSubmitting"
     >
+      <i *ngIf="isSubmitting" class="fa-solid fa-spinner fa-spin"></i>
       {{ isSubmitting ? 'Enviando...' : 'Enviar' }}
     </button>
     <button

@@ -22,29 +22,10 @@ import java.util.List;
 public class TicketController {
     
     private final TicketService ticketService;
-    private final JdbcTemplate jdbcTemplate;
-    
-    /**
-     * Obtener el ID del usuario autenticado desde el email
-     */
-    private Integer obtenerUsuarioIdDelToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        
-        String sql = "SELECT id_usuario FROM Usuarios WHERE email = ?";
-        Integer usuarioId = jdbcTemplate.queryForObject(sql, Integer.class, email);
-        
-        if (usuarioId == null) {
-            throw new RuntimeException("Usuario no encontrado: " + email);
-        }
-        
-        return usuarioId;
-    }
     
     @GetMapping("/mis-tickets")
     public ResponseEntity<List<TicketDTO>> obtenerMisTickets() {
-        Integer usuarioId = obtenerUsuarioIdDelToken();
-        List<TicketDTO> tickets = ticketService.obtenerTicketsPorUsuario(usuarioId);
+        List<TicketDTO> tickets = ticketService.obtenerTicketsPorUsuario();
         return ResponseEntity.ok(tickets);
     }
     
@@ -56,8 +37,6 @@ public class TicketController {
             @RequestParam("descripcion") String descripcion,
             @RequestParam(value = "archivo", required = false) MultipartFile archivo) {
         
-        Integer usuarioId = obtenerUsuarioIdDelToken();
-        
         CrearTicketRequest request = CrearTicketRequest.builder()
                 .documento(documento)
                 .asunto(asunto)
@@ -65,7 +44,7 @@ public class TicketController {
                 .descripcion(descripcion)
                 .build();
         
-        TicketDTO nuevoTicket = ticketService.crearTicket(usuarioId, request, archivo);
+        TicketDTO nuevoTicket = ticketService.crearTicket(request, archivo);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoTicket);
     }
 }
