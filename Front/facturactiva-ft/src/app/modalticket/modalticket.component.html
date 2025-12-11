@@ -1,0 +1,150 @@
+<div class="modal-overlay" (click)="cerrar()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Header del Modal -->
+    <div class="modal-header">
+      <h2><i class="fa-solid fa-ticket"></i> {{ ticket?.codigo }}</h2>
+      <button class="btn-close" (click)="cerrar()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Contenido del Modal -->
+    <div class="modal-body" *ngIf="ticket">
+      
+      <!-- Información del Ticket en 2 columnas -->
+      <div class="ticket-info-grid">
+        
+        <!-- Columna Izquierda -->
+        <div class="info-column">
+          <div class="info-section">
+            <h3>ASUNTO (TÍTULO)</h3>
+            <p class="asunto-texto">{{ ticket.asunto }}</p>
+          </div>
+
+          <div class="info-item">
+            <label>N° Documento:</label>
+            <span>{{ ticket.numDocumento }}</span>
+          </div>
+
+          <div class="info-item">
+            <label>Descripción:</label>
+            <p class="descripcion-texto">{{ ticket.descripcion }}</p>
+          </div>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div class="info-column">
+          <div class="info-item">
+            <label>Fecha de creación:</label>
+            <span>{{ ticket.fechaCreacion }}</span>
+          </div>
+
+          <div class="info-item">
+            <label>Estado:</label>
+            <select 
+              [(ngModel)]="ticket.estado" 
+              (change)="cambiarEstado(ticket.estado)"
+              [ngClass]="getEstadoClass(ticket.estado)"
+              class="estado-select"
+            >
+              <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+                {{ estado }}
+              </option>
+            </select>
+          </div>
+
+          <div class="info-item">
+            <label>Documentos Adjuntos:</label>
+            <div class="documento-preview">
+              <i class="fa-solid fa-file-image"></i>
+              <span>(IMAGEN DEL DOCUMENTO)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Separador -->
+      <hr class="separador">
+
+      <!-- Sección de Comentarios -->
+      <div class="comentarios-section">
+        <h3>
+          <i class="fa-solid fa-comments"></i> Comentarios
+        </h3>
+
+        <!-- Lista de comentarios -->
+        <div class="comentarios-lista">
+          <div *ngFor="let comentario of comentarios" class="comentario-item">
+            
+            <!-- Comentario principal -->
+            <div class="comentario-content" [ngClass]="'comentario-' + comentario.rol">
+              <div class="comentario-header">
+                <div class="autor-info">
+                  <i class="fa-solid fa-user-circle"></i>
+                  <strong>{{ comentario.autor }}</strong>
+                  <span class="rol-badge" [ngClass]="comentario.rol">
+                    {{ comentario.rol === 'agente' ? 'Agente' : 'Cliente' }}
+                  </span>
+                </div>
+                <span class="fecha">{{ comentario.fecha }}</span>
+              </div>
+              <p class="comentario-texto">{{ comentario.texto }}</p>
+              
+              <!-- Botón para responder -->
+              <button class="btn-responder" (click)="toggleRespuestas(comentario.id)">
+                <i class="fa-solid fa-reply"></i> Responder
+              </button>
+            </div>
+
+            <!-- Área de respuesta -->
+            <div *ngIf="mostrarRespuestas[comentario.id]" class="respuesta-input">
+              <textarea 
+                [(ngModel)]="respuestaTexto[comentario.id]"
+                placeholder="Escribe tu respuesta..."
+                rows="2"
+              ></textarea>
+              <button class="btn-enviar-respuesta" (click)="agregarRespuesta(comentario.id)">
+                <i class="fa-solid fa-paper-plane"></i> Enviar
+              </button>
+            </div>
+
+            <!-- Respuestas anidadas -->
+            <div *ngIf="comentario.respuestas.length > 0" class="respuestas-lista">
+              <div *ngFor="let respuesta of comentario.respuestas" class="comentario-item respuesta">
+                <div class="flecha-respuesta">
+                  <i class="fa-solid fa-turn-up fa-rotate-90"></i>
+                </div>
+                <div class="comentario-content" [ngClass]="'comentario-' + respuesta.rol">
+                  <div class="comentario-header">
+                    <div class="autor-info">
+                      <i class="fa-solid fa-user-circle"></i>
+                      <strong>{{ respuesta.autor }}</strong>
+                      <span class="rol-badge" [ngClass]="respuesta.rol">
+                        {{ respuesta.rol === 'agente' ? 'Agente' : 'Cliente' }}
+                      </span>
+                    </div>
+                    <span class="fecha">{{ respuesta.fecha }}</span>
+                  </div>
+                  <p class="comentario-texto">{{ respuesta.texto }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input para nuevo comentario -->
+        <div class="nuevo-comentario">
+          <textarea 
+            [(ngModel)]="nuevoComentario"
+            placeholder="Escribe un comentario..."
+            rows="3"
+          ></textarea>
+          <button class="btn-agregar-comentario" (click)="agregarComentario()">
+            <i class="fa-solid fa-paper-plane"></i> Agregar Comentario
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

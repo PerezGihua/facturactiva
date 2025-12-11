@@ -20,7 +20,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   showModal = false;
   errorMessage = '';
   isLoading = false;
+  showPassword = false;
   private errorMessageTimeout: any;
+
+    togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(
     private fb: FormBuilder,

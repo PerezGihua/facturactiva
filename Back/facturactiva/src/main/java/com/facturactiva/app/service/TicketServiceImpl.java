@@ -38,7 +38,7 @@ public class TicketServiceImpl implements TicketService {
                     .descripcion(request.getDescripcion())
                     .numeroDocumentoRechazado(request.getDocumento())
                     .idTipoComprobante(request.getTipo())
-                    .idPrioridad(2) // MEDIA por defecto
+                    .idPrioridad(1) // MEDIA por defecto
                     .build();
             
             return ticketRepository.crearTicketConArchivo(usuarioId, ticketDTO, rutaArchivo);

@@ -18,7 +18,7 @@
     </div>
 
     <div class="user-section">
-          <div class="user-info" *ngIf="currentUser$ | async as user">
+      <div class="user-info" *ngIf="currentUser$ | async as user">
         <div class="user-text">
           <span class="user-name">{{ utils.getShortName(user.nombreCompleto) }}</span>
           <span class="user-role">{{ utils.getRolName(user.idRol) }}</span>
@@ -67,8 +67,8 @@
         <div class="tickets-header">
           <h2>Mis Tickets</h2>
 
-          <!-- BOTÓN CREAR -->
-          <button class="create-btn" routerLink="crear">
+          <!-- BOTÓN CREAR - SOLO PARA CLIENTES -->
+          <button *ngIf="idRol === '1'" class="create-btn" routerLink="crear">
             Crear +
           </button>
         </div>
@@ -165,3 +165,10 @@
 
   </div>
 </div>
+
+<!-- ⬅️ MODAL PARA AGENTE DE SOPORTE (NUEVO) -->
+<app-modalticket
+  *ngIf="mostrarModalAgente"
+  [ticketCodigo]="codigoTicketSeleccionado"
+  (cerrarModal)="cerrarModalAgente()"
+></app-modalticket>

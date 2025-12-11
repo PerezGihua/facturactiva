@@ -34,8 +34,23 @@
         <!-- Contraseña -->
         <label class="input-label">Contraseña:</label>
         <div class="input-group">
-          <input type="password" formControlName="password" placeholder="Introduzca su contraseña" />
-          <span class="icon"><i class="fa-solid fa-lock"></i></span>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password" 
+            placeholder="Introduzca su contraseña" 
+          />
+          <!-- Candado - Solo cuando NO hay texto -->
+          <span class="icon" *ngIf="!loginForm.get('password')?.value">
+            <i class="fa-solid fa-lock"></i>
+          </span>
+          <!-- Ojito - Solo cuando HAY texto -->
+          <span 
+            class="icon-eye" 
+            *ngIf="loginForm.get('password')?.value"
+            (click)="togglePasswordVisibility()"
+          >
+            <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+          </span>
         </div>
         <div *ngIf="(submitted || f['password'].touched) && f['password'].errors" class="error">
           <small *ngIf="f['password'].errors['required']">La contraseña es requerida.</small>
