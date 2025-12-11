@@ -237,3 +237,38 @@ button:hover {
 .modal-close:hover {
   color: #000;
 }
+
+.input-group .icon,
+.icon-eye {
+  position: absolute;
+  right: 15px;
+  top: 40%;
+  transform: translateY(-50%);
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  transition: color 0.3s ease;
+}
+
+/* El candado no es clickeable */
+.input-group .icon {
+  pointer-events: none;
+}
+
+/* El ojito es clickeable */
+.icon-eye {
+  cursor: pointer;
+  z-index: 1;
+}
+
+.icon-eye:hover {
+  color: #333;
+}
+
+.icon-eye i,
+.input-group .icon i {
+  font-size: 18px;
+}

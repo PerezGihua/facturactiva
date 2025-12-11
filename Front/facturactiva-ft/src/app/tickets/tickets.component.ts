@@ -9,7 +9,7 @@ import { AuthService, AuthUser } from '../../services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UserUtilsService } from '../../services/user-utils.service';
-// import { AuthService } from '../../services/auth.service';
+import { ModalticketComponent } from '../modalticket/modalticket.component'; // ⬅️ NUEVO IMPORT
 
 interface Ticket {
   codigo: string;
@@ -32,7 +32,7 @@ interface Ticket {
 @Component({
   selector: 'app-tickets',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, ModalticketComponent], // ⬅️ AGREGADO ModalticketComponent
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.css']
 })
@@ -40,6 +40,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   nombreUser: string = '';
   userRole: string = '';
+  idRol: string = '';
   searchTerm: string = '';
   currentUser$: Observable<AuthUser | null>;
 
@@ -54,10 +55,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
   modalConfig = {
     title: '',
     message: '',
-    type: 'confirm' as 'confirm' | 'alert', // 'confirm' o 'alert'
+    type: 'confirm' as 'confirm' | 'alert',
     onConfirm: () => {},
     onCancel: () => {}
   };
+
+  // Modal para agente de soporte
+  mostrarModalAgente = false;
+  codigoTicketSeleccionado = '';
 
   private navigationSubscription: Subscription;
 
@@ -78,6 +83,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.nombreUser = localStorage.getItem('nombreUser') || 'Usuario';
     const idRol = localStorage.getItem('idRol');
+    this.idRol = idRol || '';
 
     switch (idRol) {
       case '1':
@@ -316,8 +322,24 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
+  // ⬅️ MÉTODO MODIFICADO
   editarTicket(codigo: string) {
-    this.router.navigate(['editar', codigo], { relativeTo: this.route });
+    const idRol = localStorage.getItem('idRol');
+    
+    if (idRol === '3') {
+      // Si es Agente de Soporte, abrir modal
+      this.codigoTicketSeleccionado = codigo;
+      this.mostrarModalAgente = true;
+    } else {
+      // Si es Cliente, abrir panel lateral
+      this.router.navigate(['editar', codigo], { relativeTo: this.route });
+    }
+  }
+
+  // ⬅️ NUEVO MÉTODO
+  cerrarModalAgente() {
+    this.mostrarModalAgente = false;
+    this.codigoTicketSeleccionado = '';
   }
 
   eliminarTicket(codigo: string) {
