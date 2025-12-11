@@ -164,4 +164,37 @@
     </main>
 
   </div>
+
+  <!-- MODAL DE CONFIRMACIÓN/ALERTA -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modalConfig.title }}</h3>
+        <button class="modal-close" (click)="closeModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>{{ modalConfig.message }}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          *ngIf="modalConfig.type === 'confirm'"
+          class="modal-btn modal-btn-cancel"
+          (click)="modalConfig.onCancel()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="modal-btn modal-btn-confirm"
+          (click)="modalConfig.onConfirm()"
+        >
+          {{ modalConfig.type === 'confirm' ? 'Aceptar' : 'OK' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

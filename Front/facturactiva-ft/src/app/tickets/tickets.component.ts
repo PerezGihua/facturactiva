@@ -21,6 +21,12 @@ interface Ticket {
   tipoIcono: string;
   tipoComprobante?: string;
   idTicket?: number;
+  prioridad?: string;
+  agente?: string;
+  fechaUltimaActualizacion?: string;
+  fechaCierre?: string;
+  rutaArchivo?: string;
+  nombreArchivo?: string;
 }
 
 @Component({
@@ -42,6 +48,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
   tickets: Ticket[] = [];
   isLoadingTickets = false;
   loadErrorMessage: string = '';
+
+  // Modal de confirmación
+  showModal = false;
+  modalConfig = {
+    title: '',
+    message: '',
+    type: 'confirm' as 'confirm' | 'alert', // 'confirm' o 'alert'
+    onConfirm: () => {},
+    onCancel: () => {}
+  };
 
   private navigationSubscription: Subscription;
 
@@ -92,15 +108,21 @@ export class TicketsComponent implements OnInit, OnDestroy {
       next: (res) => {
         try {
           const mapped = res.map(item => ({
-            codigo: item.idTicket ? this.formatTicketCode(item.idTicket, item.tipoComprobante) : (item.numeroDocumentoRechazado || 'N/A'),
+            codigo: item.idTicket ? this.formatTicketCode(item.idTicket, item.tipoComprobante || item.idTipoComprobante) : (item.numeroDocumentoRechazado || 'N/A'),
             asunto: item.asunto,
             descripcion: item.descripcion,
             numDocRechazado: item.numeroDocumentoRechazado || '',
             fechaCreacion: this.formatDate(item.fechaCreacion),
             estado: this.mapEstado(item.estado),
-            tipoIcono: this.mapTipoIcono(item.tipoComprobante),
-            tipoComprobante: item.tipoComprobante || '',
-            idTicket: item.idTicket
+            tipoIcono: this.mapTipoIcono(item.tipoComprobante || item.idTipoComprobante),
+            tipoComprobante: item.tipoComprobante || this.getTipoComprobanteName(item.idTipoComprobante) || '',
+            idTicket: item.idTicket,
+            prioridad: this.mapPrioridad(item.prioridad || item.idPrioridad),
+            agente: item.agente || '',
+            fechaUltimaActualizacion: this.formatDate(item.fechaUltimaActualizacion),
+            fechaCierre: this.formatDate(item.fechaCierre),
+            rutaArchivo: item.rutaArchivo || '',
+            nombreArchivo: item.nombre_archivo || ''
           } as Ticket));
 
           this.ticketsOriginales = mapped;
@@ -143,10 +165,35 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   private mapTipoIcono(tipo: string): string {
     if (!tipo) return 'fa-ticket';
-    const t = tipo.toLowerCase();
+    // Convertir id numérico a nombre
+    const tipoNombre = this.getTipoComprobanteName(tipo);
+    const t = tipoNombre.toLowerCase();
     if (t.includes('factura')) return 'fa-file-invoice';
     if (t.includes('boleta') || t.includes('boleta de venta')) return 'fa-receipt';
     return 'fa-ticket';
+  }
+
+  /**
+   * Convierte el id de tipo de comprobante a nombre
+   */
+  private getTipoComprobanteName(id: string): string {
+    if (!id) return '';
+
+    // Si ya viene el nombre desde el backend, devolverlo directamente
+    const tiposValidos = ['Factura', 'Boleta', 'Boleta de Venta'];
+    if (tiposValidos.includes(id)) {
+      return id;
+    }
+
+    // Mapear por id numérico (compatibilidad con versión anterior)
+    switch (id) {
+      case '1':
+        return 'Factura';
+      case '2':
+        return 'Boleta de Venta';
+      default:
+        return id;
+    }
   }
 
   /**
@@ -155,7 +202,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
    */
   private formatTicketCode(idTicket: number | string, tipoComprobante?: string): string {
     const n = typeof idTicket === 'number' ? idTicket : parseInt(idTicket as string, 10) || 0;
-    const t = (tipoComprobante || '').toLowerCase();
+    // Convertir id numérico a nombre antes de verificar
+    const tipoNombre = this.getTipoComprobanteName(tipoComprobante || '');
+    const t = tipoNombre.toLowerCase();
     const prefix = t.includes('boleta') ? 'BXA' : 'FXA';
     return `${prefix}-${n.toString().padStart(3, '0')}`;
   }
@@ -164,7 +213,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
    * Devuelve el color del icono según el tipo de comprobante.
    */
   getIconColor(tipoComprobante?: string): string {
-    const t = (tipoComprobante || '').toLowerCase();
+    // Convertir id numérico a nombre antes de verificar
+    const tipoNombre = this.getTipoComprobanteName(tipoComprobante || '');
+    const t = tipoNombre.toLowerCase();
     if (t.includes('boleta')) return '#f1c40f'; // amarillo
     if (t.includes('factura')) return '#007bff'; // azul
     // fallback a color por defecto que estaba en CSS
@@ -184,13 +235,62 @@ export class TicketsComponent implements OnInit, OnDestroy {
     return `${dd}/${mm}/${yyyy}`;
   }
 
-  private mapEstado(nombreEstado: string): string {
-    if (!nombreEstado) return 'Por Hacer';
-    const n = nombreEstado.toLowerCase();
-    if (n.includes('asign') || n.includes('en progreso')) return 'En Progreso';
-    if (n.includes('nuevo') || n.includes('por hacer')) return 'Por Hacer';
-    if (n.includes('final') || n.includes('cerrad')) return 'Finalizado';
-    return nombreEstado;
+  private mapEstado(estado: string): string {
+    if (!estado) return 'Por Hacer';
+
+    // Si ya viene el nombre desde el backend, devolverlo directamente
+    const estadosValidos = ['Nuevo', 'Asignado', 'En Espera de Cliente', 'En Proceso (Técnico)', 'Propuesta Enviada', 'Cerrado (Solucionado)'];
+    if (estadosValidos.includes(estado)) {
+      return estado;
+    }
+
+    // Mapear por id numérico (compatibilidad con versión anterior)
+    switch (estado) {
+      case '1':
+        return 'Nuevo';
+      case '2':
+        return 'Asignado';
+      case '3':
+        return 'En Espera de Cliente';
+      case '4':
+        return 'En Proceso (Técnico)';
+      case '5':
+        return 'Propuesta Enviada';
+      case '6':
+        return 'Cerrado (Solucionado)';
+      default:
+        // Fallback para nombres de estado antiguos
+        const n = estado.toLowerCase();
+        if (n.includes('asign') || n.includes('en progreso')) return 'Asignado';
+        if (n.includes('nuevo') || n.includes('por hacer')) return 'Nuevo';
+        if (n.includes('final') || n.includes('cerrad')) return 'Cerrado (Solucionado)';
+        return estado;
+    }
+  }
+
+  /**
+   * Convierte el id de prioridad a nombre
+   */
+  private mapPrioridad(prioridad: string): string {
+    if (!prioridad) return '';
+
+    // Si ya viene el nombre desde el backend, devolverlo directamente
+    const prioridadesValidas = ['Baja', 'Media', 'Alta'];
+    if (prioridadesValidas.includes(prioridad)) {
+      return prioridad;
+    }
+
+    // Mapear por id numérico (compatibilidad con versión anterior)
+    switch (prioridad) {
+      case '1':
+        return 'Baja';
+      case '2':
+        return 'Media';
+      case '3':
+        return 'Alta';
+      default:
+        return prioridad;
+    }
   }
 
   // FILTRO EN TIEMPO REAL
@@ -221,17 +321,92 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   eliminarTicket(codigo: string) {
-    console.log('Eliminar ticket:', codigo);
+    // Buscar el ticket por código para obtener su idTicket
+    const ticket = this.tickets.find(t => t.codigo === codigo);
+    if (!ticket || !ticket.idTicket) {
+      this.showAlertModal('Error', 'No se encontró el ticket o no tiene un ID válido.');
+      return;
+    }
+
+    // Confirmar eliminación con modal
+    this.showConfirmModal(
+      'Confirmar eliminación',
+      `¿Estás seguro de que deseas eliminar el ticket ${codigo}?`,
+      () => {
+        // Callback de confirmación
+        this.ejecutarEliminacion(ticket.idTicket!);
+      }
+    );
+  }
+
+  private ejecutarEliminacion(idTicket: number) {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    this.ticketsService.deleteTicket(idTicket, token || undefined).subscribe({
+      next: (res) => {
+        // Eliminar el ticket de las listas locales
+        this.ticketsOriginales = this.ticketsOriginales.filter(t => t.idTicket !== idTicket);
+        this.tickets = this.tickets.filter(t => t.idTicket !== idTicket);
+
+        // Mostrar mensaje de éxito
+        this.showAlertModal('Eliminación', res.message || 'Ticket eliminado exitosamente.');
+      },
+      error: (err) => {
+        this.showAlertModal('Error', err?.error?.message || 'No se pudo eliminar el ticket. Intente nuevamente.');
+      }
+    });
+  }
+
+  // Métodos para controlar el modal
+  showConfirmModal(title: string, message: string, onConfirm: () => void) {
+    this.modalConfig = {
+      title,
+      message,
+      type: 'confirm',
+      onConfirm: () => {
+        this.closeModal();
+        onConfirm();
+      },
+      onCancel: () => {
+        this.closeModal();
+      }
+    };
+    this.showModal = true;
+  }
+
+  showAlertModal(title: string, message: string) {
+    this.modalConfig = {
+      title,
+      message,
+      type: 'alert',
+      onConfirm: () => {
+        this.closeModal();
+      },
+      onCancel: () => {
+        this.closeModal();
+      }
+    };
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 
   getEstadoClass(estado: string): string {
     switch (estado) {
-      case 'En Progreso':
-        return 'estado-progreso';
-      case 'Por Hacer':
-        return 'estado-por-hacer';
-      case 'Finalizado':
-        return 'estado-finalizado';
+      case 'Nuevo':
+        return 'estado-nuevo';
+      case 'Asignado':
+        return 'estado-asignado';
+      case 'En Espera de Cliente':
+        return 'estado-espera-cliente';
+      case 'En Proceso (Técnico)':
+        return 'estado-en-proceso';
+      case 'Propuesta Enviada':
+        return 'estado-propuesta-enviada';
+      case 'Cerrado (Solucionado)':
+        return 'estado-cerrado';
       default:
         return '';
     }

@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.facturactiva.app.dto.CrearTicketRequest;
-import com.facturactiva.app.dto.TicketDTO;
+import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.ListTicketDTO;
 import com.facturactiva.app.repository.TicketRepository;
 
 import java.io.IOException;
@@ -19,26 +20,38 @@ public class TicketServiceImpl implements TicketService {
     private final FileStorageService fileStorageService;
     
     @Override
-    public List<TicketDTO> obtenerTicketsPorUsuario() {
+    public List<ListTicketDTO> obtenerTicketsPorUsuario() {
     	Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
         return ticketRepository.obtenerTicketsPorUsuario(usuarioId);
     }
     
     @Override
-    public TicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo) {
+    public ListTicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo) {
         try {
             Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
             String rutaArchivo = null;
+            String nombreArchivo = null;
+            
             if (archivo != null && !archivo.isEmpty()) {
                 rutaArchivo = fileStorageService.guardarArchivo(archivo, usuarioId);
             }
             
-            TicketDTO ticketDTO = TicketDTO.builder()
+            if (rutaArchivo != null) {
+                int lastSeparator = Math.max(rutaArchivo.lastIndexOf('/'), rutaArchivo.lastIndexOf('\\'));
+                if (lastSeparator != -1) {
+                    nombreArchivo = rutaArchivo.substring(lastSeparator + 1);
+                } else {
+                    nombreArchivo = null;
+                }
+            }
+            
+            ListTicketDTO ticketDTO = ListTicketDTO.builder()
                     .asunto(request.getAsunto())
                     .descripcion(request.getDescripcion())
                     .numeroDocumentoRechazado(request.getDocumento())
                     .idTipoComprobante(request.getTipo())
-                    .idPrioridad(2) // MEDIA por defecto
+                    .nombre_archivo(rutaArchivo)
+                    .idPrioridad(1)
                     .build();
             
             return ticketRepository.crearTicketConArchivo(usuarioId, ticketDTO, rutaArchivo);
@@ -46,5 +59,11 @@ public class TicketServiceImpl implements TicketService {
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar el archivo: " + e.getMessage());
         }
+    }
+    
+    @Override
+    public DeleteTicketResponse eliminarTicket(Integer ticketId) {
+    	Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
+        return ticketRepository.eliminarTicket(ticketId, usuarioId);
     }
 }

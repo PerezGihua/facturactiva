@@ -9,8 +9,7 @@ GO
 INSERT INTO Roles (nombre_rol) VALUES
 ('Cliente'),
 ('Jefe de Soporte'),
-('Agente de Soporte'),
-('Administrador');
+('Agente de Soporte')
 GO
 
 -- 4.2 INSERCIÓN INICIAL: ESTADOS
@@ -43,13 +42,6 @@ GO
 -- ===========================  ==================
 -- 9. INSERTS DE USUARIOS
 -- =============================================
-INSERT INTO usuarios (id_rol, email, password_hash, nombres, apellidos, fecha_registro, activo) VALUES
-(1, 'cliente@facturactiva.com', 'Y2xpZW50ZTEyMw==', 'Juan Carlos', 'Quispe', SYSDATETIME(), 1), -- cliente123
-(2, 'jefeSoporte@facturactiva.com', 'amVmZTEyMw==', 'Maria Elena', 'Mamani', SYSDATETIME(), 1), -- jefe123
-(3, 'soporte@facturactiva.com', 'c29wb3J0ZTEyMw==', 'Carlos Alberto', 'Pérez', SYSDATETIME(), 1); -- soporte123
-GO
-
--- Tickets
 -- Factura rechazada
 INSERT INTO Tickets (id_usuario_cliente, id_estado, id_prioridad, id_tipo_comprobante, asunto, descripcion, numero_documento_rechazado, fecha_creacion, fecha_ultima_actualizacion)
 VALUES ((SELECT id_usuario FROM Usuarios WHERE email = 'miguelperez@facturactiva.com'), 1, 3, 1, 'Factura rechazada por SUNAT', 'Error 2335 en factura F001-00001234', 'F001-00001234', GETDATE(), GETDATE());
@@ -91,36 +83,20 @@ GO
 -- =============================================
 -- ACTUALIZACIONES
 -- =============================================
--- Actualizar contraseña de cliente@facturactiva.com (cliente123)
-UPDATE Usuarios 
-SET password_hash = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy' 
-WHERE id_usuario = 4;
-
--- Actualizar contraseña de jefeSoporte@facturactiva.com (jefe123)
-UPDATE Usuarios 
-SET password_hash = '$2a$10$Q5ZQz4Ln8.T7.8y5U0Z8WOqmVq2h5YKw3JQE5W4rX6xF8jC9B0hKW' 
-WHERE id_usuario = 5;
-
--- Actualizar contraseña de soporte@facturactiva.com (soporte123)
-UPDATE Usuarios 
-SET password_hash = '$2a$10$8K1p/8jE4LqKfVKr7TZ9sO5F7V4aA1J2h6V5X9cG4L7vZ8W3yB9nO' 
-WHERE id_usuario = 6;
-
--- Verificar que se actualizaron correctamente
-SELECT id_usuario, email, LEFT(password_hash, 20) as password_preview 
-FROM Usuarios 
-WHERE id_usuario IN (4, 5, 6);
-
-ALTER TABLE Tickets
-ADD ruta_archivo VARCHAR(500) NULL;
+update Usuarios set activo = '0' where id_usuario = 4;
+update Usuarios set activo = '0' where id_usuario = 5;
+update Usuarios set activo = '0' where id_usuario = 6;
 
 -- =============================================
 -- CONSULTAS
 -- =============================================
-SELECT * FROM Estados ORDER BY id_estado;
+
+SELECT * FROM ArchivosAdjuntos;
+
 SELECT * FROM TiposComprobante ORDER BY id_comprobante;
 SELECT * FROM Prioridades ORDER BY nivel;
-
+SELECT * FROM Estados ORDER BY id_estado;
 SELECT * FROM Roles ORDER BY id_rol;
 SELECT * FROM Usuarios ORDER BY id_usuario;
 SELECT * FROM Tickets ORDER BY id_ticket;
+SELECT * FROM HistorialTicket ORDER BY id_historial;

@@ -407,6 +407,62 @@ html, body {
   font-size: 8px;
 }
 
+/* Nuevos estados */
+.estado-nuevo {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.estado-nuevo i {
+  color: #1976d2;
+}
+
+.estado-asignado {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.estado-asignado i {
+  color: #f57c00;
+}
+
+.estado-espera-cliente {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.estado-espera-cliente i {
+  color: #c2185b;
+}
+
+.estado-en-proceso {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.estado-en-proceso i {
+  color: #f57f17;
+}
+
+.estado-propuesta-enviada {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.estado-propuesta-enviada i {
+  color: #0277bd;
+}
+
+.estado-cerrado {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.estado-cerrado i {
+  color: #388e3c;
+}
+
+/* Estados antiguos (fallback) */
 .estado-progreso {
   background-color: #fff3e0;
   color: #f57c00;
@@ -514,4 +570,137 @@ html, body {
 /* Excepto la última columna (la de acciones) */
 .ticket-row td:last-child {
   cursor: default;
+}
+
+/* MODAL DE CONFIRMACIÓN/ALERTA */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  min-width: 400px;
+  max-width: 500px;
+  animation: slideDown 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-body p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  border-radius: 0 0 12px 12px;
+}
+
+.modal-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+.modal-btn-cancel {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.modal-btn-cancel:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.modal-btn-confirm {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.modal-btn-confirm:hover {
+  background-color: #256428;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
 }

@@ -11,11 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TicketDTO {
+public class ListTicketDTO {
     private Integer idTicket;
     private String asunto;
     private String descripcion;
     private String numeroDocumentoRechazado;
+    private String nombre_archivo;
     private String rutaArchivo; // NUEVO CAMPO
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaActualizacion;

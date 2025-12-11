@@ -31,4 +31,17 @@ export class TicketsService {
     }
     return this.http.post<any>(`${this.baseUrl}/tickets`, ticketData, { headers });
   }
+
+  /**
+   * Elimina un ticket por su ID.
+   * @param ticketId - ID del ticket a eliminar
+   * @param token - Token de autenticación
+   */
+  deleteTicket(ticketId: number, token?: string): Observable<any> {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return this.http.delete<any>(`${this.baseUrl}/tickets/${ticketId}`, { headers });
+  }
 }

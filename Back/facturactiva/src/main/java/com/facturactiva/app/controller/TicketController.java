@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.facturactiva.app.dto.CrearTicketRequest;
-import com.facturactiva.app.dto.TicketDTO;
+import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.ListTicketDTO;
 import com.facturactiva.app.service.TicketService;
 
 import java.util.List;
@@ -24,13 +25,13 @@ public class TicketController {
     private final TicketService ticketService;
     
     @GetMapping("/mis-tickets")
-    public ResponseEntity<List<TicketDTO>> obtenerMisTickets() {
-        List<TicketDTO> tickets = ticketService.obtenerTicketsPorUsuario();
+    public ResponseEntity<List<ListTicketDTO>> obtenerMisTickets() {
+        List<ListTicketDTO> tickets = ticketService.obtenerTicketsPorUsuario();
         return ResponseEntity.ok(tickets);
     }
     
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<TicketDTO> crearTicket(
+    public ResponseEntity<ListTicketDTO> crearTicket(
             @RequestParam("documento") String documento,
             @RequestParam("asunto") String asunto,
             @RequestParam("tipo") Integer tipo,
@@ -44,7 +45,26 @@ public class TicketController {
                 .descripcion(descripcion)
                 .build();
         
-        TicketDTO nuevoTicket = ticketService.crearTicket(request, archivo);
+        ListTicketDTO nuevoTicket = ticketService.crearTicket(request, archivo);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoTicket);
+    }
+    
+    @DeleteMapping("/{ticketId}")
+    public ResponseEntity<DeleteTicketResponse> eliminarTicket(@PathVariable Integer ticketId) {
+        DeleteTicketResponse response = ticketService.eliminarTicket(ticketId);
+        
+        if (response == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(DeleteTicketResponse.builder()
+                            .success(0)
+                            .message("Error al eliminar el ticket")
+                            .build());
+        }
+        
+        if (response.getSuccess() == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        
+        return ResponseEntity.ok(response);
     }
 }

@@ -3,13 +3,16 @@ package com.facturactiva.app.service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.facturactiva.app.dto.CrearTicketRequest;
-import com.facturactiva.app.dto.TicketDTO;
+import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.ListTicketDTO;
 
 import java.util.List;
 
 public interface TicketService {
     
-	List<TicketDTO> obtenerTicketsPorUsuario();
+	List<ListTicketDTO> obtenerTicketsPorUsuario();
     
-    TicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo);
+    ListTicketDTO crearTicket(CrearTicketRequest request, MultipartFile archivo);
+    
+    DeleteTicketResponse eliminarTicket(Integer ticketId);
 }

@@ -9,8 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
-import com.facturactiva.app.dto.TicketDTO;
+import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.ListTicketDTO;
+import com.facturactiva.app.util.UtilClass;
 
+import java.awt.Window.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -23,31 +26,36 @@ import java.util.Map;
 public class TicketRepository {
     
     private final JdbcTemplate jdbcTemplate;
+    private final UtilClass utilClass = new UtilClass();
     
-    private final RowMapper<TicketDTO> ticketRowMapper = new RowMapper<TicketDTO>() {
-        @Override
-        public TicketDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return TicketDTO.builder()
+    private final RowMapper<ListTicketDTO> ticketRowMapper = (rs, rowNum) -> {
+        try {
+            return ListTicketDTO.builder()
                     .idTicket(rs.getInt("id_ticket"))
                     .asunto(rs.getString("asunto"))
                     .descripcion(rs.getString("descripcion"))
                     .numeroDocumentoRechazado(rs.getString("numero_documento_rechazado"))
-                    .rutaArchivo(rs.getString("ruta_archivo")) // NUEVO
+                    .rutaArchivo(rs.getString("ruta_archivo"))
+                    .nombre_archivo(rs.getString("nombre_archivo"))
                     .fechaCreacion(rs.getTimestamp("fecha_creacion") != null ? 
                         rs.getTimestamp("fecha_creacion").toLocalDateTime() : null)
                     .fechaUltimaActualizacion(rs.getTimestamp("fecha_ultima_actualizacion") != null ? 
                         rs.getTimestamp("fecha_ultima_actualizacion").toLocalDateTime() : null)
                     .fechaCierre(rs.getTimestamp("fecha_cierre") != null ? 
                         rs.getTimestamp("fecha_cierre").toLocalDateTime() : null)
-                    .estado(rs.getString("nombre_estado"))
-                    .prioridad(rs.getString("nombre_prioridad"))
-                    .tipoComprobante(rs.getString("nombre_tipo_comprobante"))
-                    .agente(rs.getString("nombre_agente"))
+                    .estado(utilClass.getColumnIfExists(rs, "nombre_estado"))
+                    .prioridad(utilClass.getColumnIfExists(rs, "nombre_prioridad"))
+                    .tipoComprobante(utilClass.getColumnIfExists(rs, "nombre_tipo_comprobante"))
+                    .agente(utilClass.getColumnIfExists(rs, "nombre_agente"))
+                    .idTipoComprobante(utilClass.getIntColumnIfExists(rs, "id_tipo_comprobante"))
+                    .idPrioridad(utilClass.getIntColumnIfExists(rs, "id_prioridad"))
                     .build();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al mapear ticket: " + e.getMessage(), e);
         }
     };
     
-    public List<TicketDTO> obtenerTicketsPorUsuario(Integer usuarioId) {
+    public List<ListTicketDTO> obtenerTicketsPorUsuario(Integer usuarioId) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("sp_obtener_tickets_por_usuario")
                 .declareParameters(new SqlParameter("id_usuario_cliente", Types.INTEGER))
@@ -56,12 +64,12 @@ public class TicketRepository {
         Map<String, Object> result = jdbcCall.execute(Map.of("id_usuario_cliente", usuarioId));
         
         @SuppressWarnings("unchecked")
-        List<TicketDTO> tickets = (List<TicketDTO>) result.get("tickets");
+        List<ListTicketDTO> tickets = (List<ListTicketDTO>) result.get("tickets");
         
         return tickets != null ? tickets : List.of();
     }
     
-    public TicketDTO crearTicketConArchivo(Integer usuarioId, TicketDTO ticketDTO, String rutaArchivo) {
+    public ListTicketDTO crearTicketConArchivo(Integer usuarioId, ListTicketDTO ticketDTO, String rutaArchivo) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("sp_crear_ticket_con_archivo")
                 .declareParameters(
@@ -71,6 +79,7 @@ public class TicketRepository {
                     new SqlParameter("descripcion", Types.VARCHAR),
                     new SqlParameter("numero_documento_rechazado", Types.VARCHAR),
                     new SqlParameter("ruta_archivo", Types.VARCHAR),
+                    new SqlParameter("nombre_archivo", Types.VARCHAR),
                     new SqlParameter("id_estado", Types.INTEGER),
                     new SqlParameter("id_prioridad", Types.INTEGER)
                 )
@@ -83,13 +92,14 @@ public class TicketRepository {
         params.put("descripcion", ticketDTO.getDescripcion());
         params.put("numero_documento_rechazado", ticketDTO.getNumeroDocumentoRechazado());
         params.put("ruta_archivo", rutaArchivo);
+        params.put("nombre_archivo", ticketDTO.getNombre_archivo());
         params.put("id_estado", 1); // ABIERTO
         params.put("id_prioridad", ticketDTO.getIdPrioridad() != null ? ticketDTO.getIdPrioridad() : 2); // MEDIA por defecto
         
         Map<String, Object> result = jdbcCall.execute(params);
         
         @SuppressWarnings("unchecked")
-        List<TicketDTO> tickets = (List<TicketDTO>) result.get("ticket_creado");
+        List<ListTicketDTO> tickets = (List<ListTicketDTO>) result.get("ticket_creado");
         
         return tickets != null && !tickets.isEmpty() ? tickets.get(0) : null;
     }
@@ -106,5 +116,35 @@ public class TicketRepository {
         }
         
         return usuarioId;
+    }
+    
+    public DeleteTicketResponse eliminarTicket(Integer ticketId, Integer usuarioId) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("sp_eliminar_ticket")
+                .declareParameters(
+                    new SqlParameter("id_ticket", Types.INTEGER),
+                    new SqlParameter("id_usuario", Types.INTEGER)
+                )
+                .returningResultSet("resultado", new RowMapper<DeleteTicketResponse>() {
+                    @Override
+                    public DeleteTicketResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return DeleteTicketResponse.builder()
+                                .success(rs.getInt("success"))
+                                .message(rs.getString("message"))
+                                .idTicket(rs.getObject("id_ticket") != null ? rs.getInt("id_ticket") : null)
+                                .build();
+                    }
+                });
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("id_ticket", ticketId);
+        params.put("id_usuario", usuarioId);
+        
+        Map<String, Object> result = jdbcCall.execute(params);
+        
+        @SuppressWarnings("unchecked")
+        List<DeleteTicketResponse> responses = (List<DeleteTicketResponse>) result.get("resultado");
+        
+        return responses != null && !responses.isEmpty() ? responses.get(0) : null;
     }
 }
