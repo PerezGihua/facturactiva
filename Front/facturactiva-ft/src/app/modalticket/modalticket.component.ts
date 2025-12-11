@@ -14,11 +14,18 @@ interface Comentario {
 interface TicketDetalle {
   codigo: string;
   asunto: string;
-  numDocumento: string;
   descripcion: string;
+  numDocRechazado?: string;
   fechaCreacion: string;
+  fechaUltimaActualizacion?: string;
+  fechaCierre?: string;
   estado: string;
-  documentoAdjunto?: string;
+  prioridad?: string;
+  tipoComprobante?: string;
+  agente?: string;
+  rutaArchivo?: string;
+  nombreArchivo?: string;
+  idTicket?: number;
 }
 
 @Component({
@@ -30,6 +37,7 @@ interface TicketDetalle {
 })
 export class ModalticketComponent implements OnInit {
   @Input() ticketCodigo: string = '';
+  @Input() ticketData: TicketDetalle | null = null;
   @Output() cerrarModal = new EventEmitter<void>();
 
   ticket: TicketDetalle | null = null;
@@ -38,7 +46,14 @@ export class ModalticketComponent implements OnInit {
   respuestaTexto: { [key: number]: string } = {};
   mostrarRespuestas: { [key: number]: boolean } = {};
 
-  estadosDisponibles = ['Por Hacer', 'En Progreso', 'Finalizado'];
+  estadosDisponibles = [
+    'Nuevo',
+    'Asignado',
+    'En Espera de Cliente',
+    'En Proceso (Técnico)',
+    'Propuesta Enviada',
+    'Cerrado (Solucionado)'
+  ];
 
   ngOnInit() {
     this.cargarTicket();
@@ -46,17 +61,19 @@ export class ModalticketComponent implements OnInit {
   }
 
   cargarTicket() {
-    // TODO: Aquí irá la llamada al backend
-    // Por ahora datos en duro
-    this.ticket = {
-      codigo: this.ticketCodigo,
-      asunto: 'Rechazo de Boleta',
-      numDocumento: '3215665465',
-      descripcion: 'Tuve un problema con mi boleta, no me la aceptan.',
-      fechaCreacion: '10/12/2025',
-      estado: 'Por Hacer',
-      documentoAdjunto: '/placeholder-document.png'
-    };
+    // Si se recibió ticketData del componente padre, usarlo
+    if (this.ticketData) {
+      this.ticket = { ...this.ticketData };
+    } else {
+      // Fallback: datos por defecto si no se recibió ticketData
+      this.ticket = {
+        codigo: this.ticketCodigo,
+        asunto: 'Sin asunto',
+        descripcion: 'Sin descripción',
+        fechaCreacion: new Date().toLocaleDateString('es-PE'),
+        estado: 'Nuevo'
+      };
+    }
   }
 
   cargarComentarios() {
@@ -156,6 +173,19 @@ export class ModalticketComponent implements OnInit {
 
   getEstadoClass(estado: string): string {
     switch (estado) {
+      case 'Nuevo':
+        return 'estado-nuevo';
+      case 'Asignado':
+        return 'estado-asignado';
+      case 'En Espera de Cliente':
+        return 'estado-espera-cliente';
+      case 'En Proceso (Técnico)':
+        return 'estado-en-proceso';
+      case 'Propuesta Enviada':
+        return 'estado-propuesta-enviada';
+      case 'Cerrado (Solucionado)':
+        return 'estado-cerrado';
+      // Fallback para estados antiguos
       case 'En Progreso':
         return 'estado-progreso';
       case 'Por Hacer':

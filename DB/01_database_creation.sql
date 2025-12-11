@@ -130,6 +130,17 @@ CREATE TABLE HistorialTicket (
 );
 GO
 
+CREATE TABLE RespuestasComentarios (
+    id_respuesta INT IDENTITY(1,1) PRIMARY KEY,
+    id_comentario INT NOT NULL, -- Comentario al que responde
+    id_usuario INT NOT NULL, -- Usuario que escribe la respuesta
+    contenido TEXT NOT NULL,
+    fecha_creacion DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET(),
+    CONSTRAINT FK_Respuestas_Comentarios FOREIGN KEY (id_comentario) REFERENCES Comentarios(id_comentario),
+    CONSTRAINT FK_Respuestas_Usuarios FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+GO
+
 -- =============================================
 -- 3.  NDICES PARA OPTIMIZACI N (RNF2.5)
 -- =============================================

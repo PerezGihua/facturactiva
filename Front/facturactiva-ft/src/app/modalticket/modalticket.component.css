@@ -35,8 +35,8 @@ i[class*="fa-"] {
 .modal-container {
   background: white;
   border-radius: 12px;
-  width: 90%;
-  max-width: 1000px;
+  width: 95%;
+  max-width: 1400px;
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -58,7 +58,7 @@ i[class*="fa-"] {
 
 /* Header */
 .modal-header {
-  background: linear-gradient(135deg, #00d4aa 0%, #00b892 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   padding: 20px 30px;
   display: flex;
@@ -177,6 +177,44 @@ i[class*="fa-"] {
   width: fit-content;
 }
 
+/* Estilos para nuevos estados */
+.estado-select.estado-nuevo {
+  background-color: #e3f2fd;
+  border-color: #1976d2;
+  color: #0d47a1;
+}
+
+.estado-select.estado-asignado {
+  background-color: #fff3e0;
+  border-color: #f57c00;
+  color: #e65100;
+}
+
+.estado-select.estado-espera-cliente {
+  background-color: #fce4ec;
+  border-color: #c2185b;
+  color: #880e4f;
+}
+
+.estado-select.estado-en-proceso {
+  background-color: #fff9c4;
+  border-color: #f57f17;
+  color: #e65100;
+}
+
+.estado-select.estado-propuesta-enviada {
+  background-color: #e1f5fe;
+  border-color: #0277bd;
+  color: #01579b;
+}
+
+.estado-select.estado-cerrado {
+  background-color: #e8f5e9;
+  border-color: #2e7d32;
+  color: #1b5e20;
+}
+
+/* Estados antiguos (fallback) */
 .estado-select.estado-progreso {
   background-color: #fff3cd;
   border-color: #ffc107;
@@ -208,7 +246,7 @@ i[class*="fa-"] {
 
 .documento-preview i {
   font-size: 30px;
-  color: #00d4aa;
+  color: #007bff;
 }
 
 .documento-preview span {
@@ -236,7 +274,7 @@ i[class*="fa-"] {
 }
 
 .comentarios-section h3 i {
-  color: #00d4aa;
+  color: #2e7d32;
 }
 
 /* Lista de comentarios */
@@ -255,12 +293,12 @@ i[class*="fa-"] {
   background: #f8f9fa;
   padding: 15px;
   border-radius: 10px;
-  border-left: 4px solid #00d4aa;
+  border-left: 4px solid #2e7d32;
 }
 
 .comentario-content.comentario-cliente {
-  border-left-color: #28a745;
-  background: #f0f8f0;
+  border-left-color: #007bff;
+  background: #e3f2fd;
 }
 
 .comentario-header {
@@ -278,11 +316,11 @@ i[class*="fa-"] {
 
 .autor-info i {
   font-size: 20px;
-  color: #00d4aa;
+  color: #2e7d32;
 }
 
 .comentario-cliente .autor-info i {
-  color: #28a745;
+  color: #007bff;
 }
 
 .rol-badge {
@@ -294,12 +332,12 @@ i[class*="fa-"] {
 }
 
 .rol-badge.agente {
-  background: #00d4aa;
+  background: #2e7d32;
   color: white;
 }
 
 .rol-badge.cliente {
-  background: #28a745;
+  background: #007bff;
   color: white;
 }
 
@@ -318,7 +356,7 @@ i[class*="fa-"] {
   margin-top: 10px;
   background: none;
   border: none;
-  color: #00d4aa;
+  color: #2e7d32;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -330,7 +368,7 @@ i[class*="fa-"] {
 }
 
 .btn-responder:hover {
-  color: #00b892;
+  color: #1b5e20;
 }
 
 /* Respuestas anidadas */
@@ -371,13 +409,13 @@ i[class*="fa-"] {
 }
 
 .respuesta-input textarea:focus {
-  border-color: #00d4aa;
+  border-color: #2e7d32;
   outline: none;
 }
 
 .btn-enviar-respuesta {
   align-self: flex-end;
-  background: #00d4aa;
+  background: #2e7d32;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -391,7 +429,7 @@ i[class*="fa-"] {
 }
 
 .btn-enviar-respuesta:hover {
-  background: #00b892;
+  background: #1b5e20;
   transform: translateY(-2px);
 }
 
@@ -416,13 +454,13 @@ i[class*="fa-"] {
 }
 
 .nuevo-comentario textarea:focus {
-  border-color: #00d4aa;
+  border-color: #2e7d32;
   outline: none;
 }
 
 .btn-agregar-comentario {
   align-self: flex-end;
-  background: linear-gradient(135deg, #00d4aa 0%, #00b892 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -434,10 +472,10 @@ i[class*="fa-"] {
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
 }
 
 .btn-agregar-comentario:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
 }
