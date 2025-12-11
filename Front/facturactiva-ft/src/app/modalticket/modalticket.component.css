@@ -1,17 +1,13 @@
-/* Importar Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* Aplicar Poppins pero respetar Font Awesome */
 body, button, input, textarea, select, p, h1, h2, h3, h4, h5, h6, span, label, div {
   font-family: 'Poppins', sans-serif !important;
 }
 
-/* Asegurar que los iconos de Font Awesome no se vean afectados */
 i[class*="fa-"] {
   font-family: "Font Awesome 6 Free" !important;
 }
 
-/* Overlay del modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -31,7 +27,6 @@ i[class*="fa-"] {
   to { opacity: 1; }
 }
 
-/* Container del modal */
 .modal-container {
   background: white;
   border-radius: 12px;
@@ -58,7 +53,7 @@ i[class*="fa-"] {
 
 /* Header */
 .modal-header {
-  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #4caf50 100%);
   color: white;
   padding: 20px 30px;
   display: flex;
@@ -127,14 +122,16 @@ i[class*="fa-"] {
   letter-spacing: 0.5px;
 }
 
+/* CAMBIO AQUÍ - Título del asunto más grande y alineado */
 .asunto-texto {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   color: #333;
-  margin: 0;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 6px;
+  margin: 0 0 20px 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  line-height: 1.2;
 }
 
 .info-item {
@@ -143,9 +140,16 @@ i[class*="fa-"] {
   gap: 6px;
 }
 
+/* Estilo especial para N° Documento en línea */
+.info-item.num-documento {
+  flex-direction: row;
+  gap: 8px;
+  align-items: baseline;
+}
+
 .info-item label {
-  font-weight: 600;
-  color: #666;
+  font-weight: 700;
+  color: #333;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -214,24 +218,6 @@ i[class*="fa-"] {
   color: #1b5e20;
 }
 
-/* Estados antiguos (fallback) */
-.estado-select.estado-progreso {
-  background-color: #fff3cd;
-  border-color: #ffc107;
-  color: #856404;
-}
-
-.estado-select.estado-por-hacer {
-  background-color: #d1ecf1;
-  border-color: #17a2b8;
-  color: #0c5460;
-}
-
-.estado-select.estado-finalizado {
-  background-color: #d4edda;
-  border-color: #28a745;
-  color: #155724;
-}
 
 /* Documento preview */
 .documento-preview {
@@ -274,7 +260,7 @@ i[class*="fa-"] {
 }
 
 .comentarios-section h3 i {
-  color: #2e7d32;
+  color: #4caf50;
 }
 
 /* Lista de comentarios */
@@ -293,7 +279,7 @@ i[class*="fa-"] {
   background: #f8f9fa;
   padding: 15px;
   border-radius: 10px;
-  border-left: 4px solid #2e7d32;
+  border-left: 4px solid #4caf50;
 }
 
 .comentario-content.comentario-cliente {
@@ -316,7 +302,7 @@ i[class*="fa-"] {
 
 .autor-info i {
   font-size: 20px;
-  color: #2e7d32;
+  color: #4caf50;
 }
 
 .comentario-cliente .autor-info i {
@@ -332,7 +318,7 @@ i[class*="fa-"] {
 }
 
 .rol-badge.agente {
-  background: #2e7d32;
+  background: #4caf50;
   color: white;
 }
 
@@ -356,7 +342,7 @@ i[class*="fa-"] {
   margin-top: 10px;
   background: none;
   border: none;
-  color: #2e7d32;
+  color: #4caf50;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -368,7 +354,7 @@ i[class*="fa-"] {
 }
 
 .btn-responder:hover {
-  color: #1b5e20;
+  color: #4caf50;
 }
 
 /* Respuestas anidadas */
@@ -405,17 +391,17 @@ i[class*="fa-"] {
   border-radius: 8px;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  resize: vertical;
+  resize: none;
 }
 
 .respuesta-input textarea:focus {
-  border-color: #2e7d32;
+  border-color: #4caf50;
   outline: none;
 }
 
 .btn-enviar-respuesta {
   align-self: flex-end;
-  background: #2e7d32;
+  background: #4caf50;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -429,7 +415,7 @@ i[class*="fa-"] {
 }
 
 .btn-enviar-respuesta:hover {
-  background: #1b5e20;
+  background: #4caf50;
   transform: translateY(-2px);
 }
 
@@ -450,17 +436,45 @@ i[class*="fa-"] {
   border-radius: 8px;
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  resize: vertical;
+  resize: none;
 }
 
 .nuevo-comentario textarea:focus {
-  border-color: #2e7d32;
+  border-color: #4caf50;
   outline: none;
 }
 
+.comentario-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-eliminar-ticket {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.btn-eliminar-ticket:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
 .btn-agregar-comentario {
-  align-self: flex-end;
-  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  background: linear-gradient(135deg, #4caf50 0%, #4caf50 100%);
   color: white;
   border: none;
   padding: 12px 24px;

@@ -134,10 +134,10 @@
                   </span>
                 </td>
 
-                <!-- Solo el botón de eliminar, sin el botón de editar -->
                 <td>
                   <div class="actions">
                     <button
+                      *ngIf="idRol === '1'"
                       class="btn-action btn-delete"
                       (click)="eliminarTicket(ticket.codigo); $event.stopPropagation()"
                     >
@@ -152,7 +152,6 @@
 
       </div>
 
-      <!-- OVERLAY (BLOQUEA TODO MENOS EL PANEL DERECHO) -->
       <div
         class="overlay"
         *ngIf="router.url.includes('/tickets/crear') || router.url.includes('/tickets/editar')"
@@ -199,9 +198,9 @@
 
 </div>
 
-<!-- MODAL PARA AGENTE DE SOPORTE -->
 <app-modalticket
   *ngIf="mostrarModalAgente"
   [ticketCodigo]="codigoTicketSeleccionado"
+  [userRole]="userRole"
   (cerrarModal)="cerrarModalAgente()"
 ></app-modalticket>

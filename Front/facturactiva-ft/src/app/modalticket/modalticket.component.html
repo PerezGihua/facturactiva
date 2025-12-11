@@ -17,24 +17,17 @@
         
         <!-- Columna Izquierda -->
         <div class="info-column">
-          <div class="info-section">
-            <h3>ASUNTO (TÍTULO)</h3>
-            <p class="asunto-texto">{{ ticket.asunto }}</p>
-          </div>
+          <!-- Asunto como título -->
+          <p class="asunto-texto">{{ ticket.asunto }}</p>
 
-          <div class="info-item" *ngIf="ticket.numDocRechazado">
-            <label>N° Documento Rechazado:</label>
+          <div class="info-item">
+            <label>N° Documento:</label>
             <span>{{ ticket.numDocRechazado }}</span>
           </div>
 
           <div class="info-item">
             <label>Descripción:</label>
             <p class="descripcion-texto">{{ ticket.descripcion }}</p>
-          </div>
-
-          <div class="info-item" *ngIf="ticket.tipoComprobante">
-            <label>Tipo de Comprobante:</label>
-            <span>{{ ticket.tipoComprobante }}</span>
           </div>
         </div>
 
@@ -45,25 +38,10 @@
             <span>{{ ticket.fechaCreacion }}</span>
           </div>
 
-          <div class="info-item" *ngIf="ticket.fechaUltimaActualizacion">
-            <label>Última actualización:</label>
-            <span>{{ ticket.fechaUltimaActualizacion }}</span>
-          </div>
-
-          <div class="info-item" *ngIf="ticket.prioridad">
-            <label>Prioridad:</label>
-            <span>{{ ticket.prioridad }}</span>
-          </div>
-
-          <div class="info-item" *ngIf="ticket.agente">
-            <label>Agente Asignado:</label>
-            <span>{{ ticket.agente }}</span>
-          </div>
-
           <div class="info-item">
             <label>Estado:</label>
-            <select
-              [(ngModel)]="ticket.estado"
+            <select 
+              [(ngModel)]="ticket.estado" 
               (change)="cambiarEstado(ticket.estado)"
               [ngClass]="getEstadoClass(ticket.estado)"
               class="estado-select"
@@ -76,16 +54,10 @@
 
           <div class="info-item">
             <label>Documentos Adjuntos:</label>
-            <div class="documento-preview" *ngIf="ticket.nombreArchivo; else noDocumento">
-              <i class="fa-solid fa-file-pdf"></i>
-              <span>{{ ticket.nombreArchivo }}</span>
+            <div class="documento-preview">
+              <i class="fa-solid fa-file-image"></i>
+              <span>(IMAGEN DEL DOCUMENTO)</span>
             </div>
-            <ng-template #noDocumento>
-              <div class="documento-preview">
-                <i class="fa-solid fa-file-circle-xmark"></i>
-                <span>Sin documento adjunto</span>
-              </div>
-            </ng-template>
           </div>
         </div>
       </div>
@@ -166,9 +138,19 @@
             placeholder="Escribe un comentario..."
             rows="3"
           ></textarea>
-          <button class="btn-agregar-comentario" (click)="agregarComentario()">
-            <i class="fa-solid fa-paper-plane"></i> Agregar Comentario
-          </button>
+          <div class="comentario-actions">
+            <!-- Botón Eliminar - Solo para clientes -->
+            <button 
+              *ngIf="userRole === 'cliente'" 
+              class="btn-eliminar-ticket" 
+              (click)="eliminarTicket()"
+            >
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+            <button class="btn-agregar-comentario" (click)="agregarComentario()">
+              <i class="fa-solid fa-paper-plane"></i> Agregar Comentario
+            </button>
+          </div>
         </div>
       </div>
     </div>

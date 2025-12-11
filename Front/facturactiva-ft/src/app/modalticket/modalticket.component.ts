@@ -55,26 +55,49 @@ export class ModalticketComponent implements OnInit {
     'Cerrado (Solucionado)'
   ];
 
+  @Input() userRole: string = '';
+
+    // Agrega este método antes del método cerrar():
+    eliminarTicket() {
+      if (!this.ticket || !this.ticket.idTicket) {
+        alert('No se puede eliminar este ticket');
+        return;
+      }
+
+      const confirmacion = confirm(`¿Estás seguro de que deseas eliminar el ticket ${this.ticket.codigo}?`);
+      
+      if (confirmacion) {
+        // Aquí irá la llamada al backend para eliminar
+        console.log('Eliminando ticket:', this.ticket.idTicket);
+        
+        // Por ahora solo cerramos el modal
+        // TODO: Implementar llamada al servicio de tickets
+        this.cerrar();
+      }
+    }
+
+
   ngOnInit() {
     this.cargarTicket();
     this.cargarComentarios();
   }
 
-  cargarTicket() {
-    // Si se recibió ticketData del componente padre, usarlo
-    if (this.ticketData) {
-      this.ticket = { ...this.ticketData };
-    } else {
-      // Fallback: datos por defecto si no se recibió ticketData
-      this.ticket = {
-        codigo: this.ticketCodigo,
-        asunto: 'Sin asunto',
-        descripcion: 'Sin descripción',
-        fechaCreacion: new Date().toLocaleDateString('es-PE'),
-        estado: 'Nuevo'
-      };
+    cargarTicket() {
+      // Si se recibió ticketData del componente padre, usarlo
+      if (this.ticketData) {
+        this.ticket = { ...this.ticketData };
+      } else {
+        // Datos de prueba
+        this.ticket = {
+          codigo: this.ticketCodigo || 'BXA-004',
+          asunto: 'Rechazo de Boleta',
+          numDocRechazado: '3215665465',
+          descripcion: 'Tuve un problema con mi boleta, no me la aceptan.',
+          fechaCreacion: '10/12/2025',
+          estado: 'Nuevo'
+        };
+      }
     }
-  }
 
   cargarComentarios() {
     // TODO: Aquí irá la llamada al backend
