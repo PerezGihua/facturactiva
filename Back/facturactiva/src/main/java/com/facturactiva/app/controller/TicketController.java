@@ -1,6 +1,7 @@
 package com.facturactiva.app.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,9 +10,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.facturactiva.app.dto.CrearTicketRequest;
-import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.DetalleTicketDTO;
 import com.facturactiva.app.dto.ListTicketDTO;
+import com.facturactiva.app.model.AgregarComentarioRequest;
+import com.facturactiva.app.model.AgregarComentarioResponse;
+import com.facturactiva.app.model.CrearTicketRequest;
+import com.facturactiva.app.model.DeleteTicketResponse;
 import com.facturactiva.app.service.TicketService;
 
 import java.util.List;
@@ -66,5 +70,34 @@ public class TicketController {
         }
         
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<DetalleTicketDTO> obtenerDetalleTicket(@PathVariable Integer ticketId) {
+        try {
+            DetalleTicketDTO detalle = ticketService.obtenerDetalleTicket(ticketId);
+            return ResponseEntity.ok(detalle);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PostMapping("/{ticketId}/comentarios")
+    public ResponseEntity<AgregarComentarioResponse> agregarComentario(
+            @PathVariable Integer ticketId,
+            @RequestBody AgregarComentarioRequest request) {
+        try {
+            // Establecer el ID del ticket desde el path
+            request.setIdTicket(ticketId);
+            
+            AgregarComentarioResponse response = ticketService.agregarComentario(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            AgregarComentarioResponse errorResponse = AgregarComentarioResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 }

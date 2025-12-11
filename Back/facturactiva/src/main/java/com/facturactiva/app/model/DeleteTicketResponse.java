@@ -1,4 +1,4 @@
-package com.facturactiva.app.dto;
+package com.facturactiva.app.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,12 +1,16 @@
 package com.facturactiva.app.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.facturactiva.app.dto.CrearTicketRequest;
-import com.facturactiva.app.dto.DeleteTicketResponse;
+import com.facturactiva.app.dto.DetalleTicketDTO;
 import com.facturactiva.app.dto.ListTicketDTO;
+import com.facturactiva.app.model.AgregarComentarioRequest;
+import com.facturactiva.app.model.AgregarComentarioResponse;
+import com.facturactiva.app.model.CrearTicketRequest;
+import com.facturactiva.app.model.DeleteTicketResponse;
 import com.facturactiva.app.repository.TicketRepository;
 
 import java.io.IOException;
@@ -65,5 +69,41 @@ public class TicketServiceImpl implements TicketService {
     public DeleteTicketResponse eliminarTicket(Integer ticketId) {
     	Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
         return ticketRepository.eliminarTicket(ticketId, usuarioId);
+    }
+    
+    @Override
+    public DetalleTicketDTO obtenerDetalleTicket(Integer ticketId) {
+        // Obtener el ID del usuario autenticado desde el token JWT
+        Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
+        
+        if (usuarioId == null) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+        
+        // Llamar al repository para obtener el detalle
+        return ticketRepository.obtenerDetalleTicket(ticketId, usuarioId);
+    }
+
+    @Override
+    public AgregarComentarioResponse agregarComentario(AgregarComentarioRequest request) {
+        // Obtener el ID del usuario autenticado desde el token JWT
+        Integer usuarioId = ticketRepository.obtenerUsuarioIdDelToken();
+        
+        if (usuarioId == null) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+        
+        // Validar que el contenido no esté vacío
+        if (request.getContenido() == null || request.getContenido().trim().isEmpty()) {
+            throw new RuntimeException("El contenido del comentario no puede estar vacío");
+        }
+        
+        // Llamar al repository para agregar el comentario
+        return ticketRepository.agregarComentario(
+            request.getIdTicket(),
+            usuarioId,
+            request.getContenido(),
+            request.getIdComentarioPadre()
+        );
     }
 }

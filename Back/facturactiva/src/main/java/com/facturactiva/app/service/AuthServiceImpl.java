@@ -1,17 +1,18 @@
 package com.facturactiva.app.service;
 
-import com.facturactiva.app.dto.LoginRequest;
-import com.facturactiva.app.dto.LoginResponse;
-import com.facturactiva.app.dto.RegisterRequest;
-import com.facturactiva.app.dto.RegisterResponse;
 import com.facturactiva.app.dto.UserDetailsDTO;
 import com.facturactiva.app.entity.UsuarioEntity;
 import com.facturactiva.app.exception.AuthException;
+import com.facturactiva.app.model.LoginRequest;
+import com.facturactiva.app.model.LoginResponse;
+import com.facturactiva.app.model.RegisterRequest;
+import com.facturactiva.app.model.RegisterResponse;
 import com.facturactiva.app.repository.AuthRepository;
 import com.facturactiva.app.security.JwtTokenProvider;
 import com.facturactiva.app.util.Constantes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

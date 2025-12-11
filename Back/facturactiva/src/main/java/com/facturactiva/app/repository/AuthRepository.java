@@ -1,10 +1,11 @@
 package com.facturactiva.app.repository;
 
-import com.facturactiva.app.dto.RegisterRequest;
 import com.facturactiva.app.entity.UsuarioEntity;
+import com.facturactiva.app.model.RegisterRequest;
 import com.facturactiva.app.util.Constantes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;

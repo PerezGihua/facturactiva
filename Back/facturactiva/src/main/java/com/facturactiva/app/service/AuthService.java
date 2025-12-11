@@ -1,11 +1,11 @@
 package com.facturactiva.app.service;
 
-import com.facturactiva.app.dto.LoginRequest;
-import com.facturactiva.app.dto.LoginResponse;
-import com.facturactiva.app.dto.RegisterRequest;
-import com.facturactiva.app.dto.RegisterResponse;
 import com.facturactiva.app.dto.UserDetailsDTO;
 import com.facturactiva.app.entity.UsuarioEntity;
+import com.facturactiva.app.model.LoginRequest;
+import com.facturactiva.app.model.LoginResponse;
+import com.facturactiva.app.model.RegisterRequest;
+import com.facturactiva.app.model.RegisterResponse;
 
 import java.util.Map;
 import java.util.Optional;

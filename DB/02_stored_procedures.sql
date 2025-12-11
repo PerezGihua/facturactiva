@@ -238,8 +238,15 @@ BEGIN
         t.fecha_creacion,
         t.fecha_ultima_actualizacion,
         t.fecha_cierre,
-        t.activo, -- ⭐ NUEVO CAMPO
-        -- Obtener la ruta del primer archivo adjunto (si existe)
+        t.activo,
+        -- ⭐ Obtener el NOMBRE del primer archivo adjunto (si existe)
+        (
+            SELECT TOP 1 nombre_archivo 
+            FROM ArchivosAdjuntos 
+            WHERE id_ticket = t.id_ticket 
+            ORDER BY fecha_subida ASC
+        ) AS nombre_archivo,
+        -- ⭐ Obtener la RUTA del primer archivo adjunto (si existe)
         (
             SELECT TOP 1 ruta_almacenamiento 
             FROM ArchivosAdjuntos 
@@ -273,9 +280,9 @@ BEGIN
             WHEN @id_rol = 3 THEN t.id_usuario_agente   -- Agente de Soporte
             ELSE t.id_usuario_cliente
         END = @id_usuario_cliente
-        AND t.activo = 1 -- ⭐ Solo mostrar tickets activos
+        AND t.activo = 1
     ORDER BY 
-        p.nivel DESC, -- Primero las prioridades más altas
+        p.nivel DESC,
         t.fecha_creacion DESC;
 END;
 GO
@@ -710,6 +717,309 @@ BEGIN
         1 AS success,
         'Ticket eliminado exitosamente' AS message,
         @id_ticket AS id_ticket;
+END;
+GO
+
+CREATE PROCEDURE sp_obtener_detalle_ticket
+    @id_ticket INT,
+    @id_usuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Validar que el ticket existe y está activo
+    IF NOT EXISTS (SELECT 1 FROM Tickets WHERE id_ticket = @id_ticket AND activo = 1)
+    BEGIN
+        -- En lugar de RAISERROR, retornar resultado vacío
+        SELECT NULL AS id_ticket, 'Ticket no encontrado' AS mensaje WHERE 1=0;
+        RETURN;
+    END
+    
+    -- Validar que el usuario tiene acceso al ticket
+    IF NOT EXISTS (
+        SELECT 1 FROM Tickets 
+        WHERE id_ticket = @id_ticket 
+        AND (id_usuario_cliente = @id_usuario OR id_usuario_agente = @id_usuario)
+    )
+    BEGIN
+        -- En lugar de RAISERROR, retornar resultado vacío
+        SELECT NULL AS id_ticket, 'Sin permisos para ver este ticket' AS mensaje WHERE 1=0;
+        RETURN;
+    END
+    
+    -- 1. Información principal del ticket
+    SELECT 
+        t.id_ticket,
+        t.asunto,
+        t.numero_documento_rechazado AS numeroDocumento,
+        t.descripcion,
+        t.fecha_creacion AS fechaCreacion,
+        e.nombre_estado AS estado,
+        t.id_estado AS idEstado,
+        p.nombre_prioridad AS prioridad,
+        t.id_prioridad AS idPrioridad,
+        tc.nombre_comprobante AS tipoComprobante,
+        uc.nombres AS nombreCliente,
+        ua.nombres AS nombreAgente,
+        t.id_usuario_agente AS idUsuarioAgente
+    FROM Tickets t
+    LEFT JOIN Estados e ON t.id_estado = e.id_estado
+    LEFT JOIN Prioridades p ON t.id_prioridad = p.id_prioridad
+    LEFT JOIN TiposComprobante tc ON t.id_tipo_comprobante = tc.id_comprobante
+    LEFT JOIN Usuarios uc ON t.id_usuario_cliente = uc.id_usuario
+    LEFT JOIN Usuarios ua ON t.id_usuario_agente = ua.id_usuario
+    WHERE t.id_ticket = @id_ticket;
+    
+    -- 2. Archivos adjuntos
+    SELECT 
+        aa.id_archivo AS idArchivo,
+        aa.nombre_archivo AS nombreArchivo,
+        aa.ruta_almacenamiento AS rutaAlmacenamiento,
+        aa.es_correccion AS esCorreccion,
+        aa.fecha_subida AS fechaSubida,
+        u.nombres AS nombreUsuario
+    FROM ArchivosAdjuntos aa
+    LEFT JOIN Usuarios u ON aa.id_usuario = u.id_usuario
+    WHERE aa.id_ticket = @id_ticket
+    ORDER BY aa.fecha_subida ASC;
+    
+    -- 3. Comentarios
+    SELECT 
+        c.id_comentario AS idComentario,
+        c.contenido,
+        c.fecha_creacion AS fechaCreacion,
+        u.nombres AS nombreUsuario,
+        c.id_usuario AS idUsuario,
+        CASE 
+            WHEN u.id_rol = 2 THEN 'AGENTE'
+            ELSE 'CLIENTE'
+        END AS tipoUsuario
+    FROM Comentarios c
+    LEFT JOIN Usuarios u ON c.id_usuario = u.id_usuario
+    WHERE c.id_ticket = @id_ticket
+    ORDER BY c.fecha_creacion ASC;
+    
+    -- 4. Respuestas a comentarios
+    SELECT 
+        rc.id_respuesta AS idRespuesta,
+        rc.id_comentario AS idComentario,
+        rc.contenido,
+        rc.fecha_creacion AS fechaCreacion,
+        u.nombres AS nombreUsuario,
+        rc.id_usuario AS idUsuario,
+        CASE 
+            WHEN u.id_rol = 2 THEN 'AGENTE'
+            ELSE 'CLIENTE'
+        END AS tipoUsuario
+    FROM RespuestasComentarios rc
+    LEFT JOIN Usuarios u ON rc.id_usuario = u.id_usuario
+    WHERE rc.id_comentario IN (
+        SELECT id_comentario FROM Comentarios WHERE id_ticket = @id_ticket
+    )
+    ORDER BY rc.fecha_creacion ASC;
+END;
+GO
+
+CREATE PROCEDURE sp_agregar_comentario_ticket
+    @id_ticket INT,
+    @id_usuario INT,
+    @contenido TEXT,
+    @id_comentario_padre INT = NULL  -- NULL = comentario nuevo, valor = respuesta
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @id_comentario_nuevo INT;
+    DECLARE @id_respuesta_nueva INT;
+    DECLARE @es_cliente BIT = 0;
+    DECLARE @id_agente_actual INT;
+    DECLARE @nuevo_estado INT;
+    DECLARE @nueva_prioridad INT;
+    DECLARE @nombre_estado VARCHAR(50);
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Validar que el ticket existe y está activo
+        IF NOT EXISTS (SELECT 1 FROM Tickets WHERE id_ticket = @id_ticket AND activo = 1)
+        BEGIN
+            RAISERROR('El ticket no existe o ha sido eliminado', 16, 1);
+            RETURN;
+        END
+        
+        -- Validar que el usuario tiene acceso al ticket
+        IF NOT EXISTS (
+            SELECT 1 FROM Tickets 
+            WHERE id_ticket = @id_ticket 
+            AND (id_usuario_cliente = @id_usuario OR id_usuario_agente = @id_usuario)
+        )
+        BEGIN
+            RAISERROR('No tiene permisos para comentar en este ticket', 16, 1);
+            RETURN;
+        END
+        
+        -- Verificar si el usuario es cliente o agente
+        SELECT @es_cliente = CASE 
+            WHEN id_usuario_cliente = @id_usuario THEN 1 
+            ELSE 0 
+        END,
+        @id_agente_actual = id_usuario_agente
+        FROM Tickets 
+        WHERE id_ticket = @id_ticket;
+        
+        -- Si es una respuesta a un comentario
+        IF @id_comentario_padre IS NOT NULL
+        BEGIN
+            -- Validar que el comentario padre existe
+            IF NOT EXISTS (SELECT 1 FROM Comentarios WHERE id_comentario = @id_comentario_padre)
+            BEGIN
+                RAISERROR('El comentario padre no existe', 16, 1);
+                RETURN;
+            END
+            
+            -- Insertar respuesta
+            INSERT INTO RespuestasComentarios (
+                id_comentario,
+                id_usuario,
+                contenido,
+                fecha_creacion
+            )
+            VALUES (
+                @id_comentario_padre,
+                @id_usuario,
+                @contenido,
+                SYSDATETIMEOFFSET()
+            );
+            
+            SET @id_respuesta_nueva = SCOPE_IDENTITY();
+            
+            -- Registrar en historial
+            INSERT INTO HistorialTicket (
+                id_ticket,
+                id_usuario_afector,
+                tipo_evento,
+                detalle,
+                fecha_evento
+            )
+            VALUES (
+                @id_ticket,
+                @id_usuario,
+                'RESPUESTA_COMENTARIO',
+                'Respuesta agregada al comentario #' + CAST(@id_comentario_padre AS VARCHAR),
+                GETDATE()
+            );
+        END
+        ELSE
+        BEGIN
+            -- Insertar comentario nuevo
+            INSERT INTO Comentarios (
+                id_ticket,
+                id_usuario,
+                contenido,
+                fecha_creacion
+            )
+            VALUES (
+                @id_ticket,
+                @id_usuario,
+                @contenido,
+                SYSDATETIMEOFFSET()
+            );
+            
+            SET @id_comentario_nuevo = SCOPE_IDENTITY();
+            
+            -- Registrar en historial
+            INSERT INTO HistorialTicket (
+                id_ticket,
+                id_usuario_afector,
+                tipo_evento,
+                detalle,
+                fecha_evento
+            )
+            VALUES (
+                @id_ticket,
+                @id_usuario,
+                'COMENTARIO_AGREGADO',
+                'Comentario agregado al ticket',
+                GETDATE()
+            );
+        END
+        
+        -- Si el usuario es CLIENTE, actualizar estado y prioridad
+        IF @es_cliente = 1
+        BEGIN
+            -- Cambiar estado a ASIGNADO (id_estado = 2)
+            SET @nuevo_estado = 2;
+            
+            -- Cambiar prioridad a ALTA (id_prioridad = 3)
+            SET @nueva_prioridad = 3;
+            
+            -- Actualizar el ticket
+            UPDATE Tickets
+            SET 
+                id_estado = @nuevo_estado,
+                id_prioridad = @nueva_prioridad,
+                fecha_ultima_actualizacion = GETDATE(),
+                -- Mantener el mismo agente si ya tiene uno asignado
+                id_usuario_agente = ISNULL(@id_agente_actual, id_usuario_agente)
+            WHERE id_ticket = @id_ticket;
+            
+            -- Registrar cambio de estado en historial
+            INSERT INTO HistorialTicket (
+                id_ticket,
+                id_usuario_afector,
+                tipo_evento,
+                detalle,
+                fecha_evento
+            )
+            VALUES (
+                @id_ticket,
+                @id_usuario,
+                'CAMBIO_ESTADO',
+                'Estado cambiado a ASIGNADO por comentario del cliente',
+                GETDATE()
+            );
+            
+            -- Registrar cambio de prioridad en historial
+            INSERT INTO HistorialTicket (
+                id_ticket,
+                id_usuario_afector,
+                tipo_evento,
+                detalle,
+                fecha_evento
+            )
+            VALUES (
+                @id_ticket,
+                @id_usuario,
+                'CAMBIO_PRIORIDAD',
+                'Prioridad cambiada a ALTA por comentario del cliente',
+                GETDATE()
+            );
+        END
+        
+        -- Obtener el nombre del estado actual
+        SELECT @nombre_estado = nombre_estado 
+        FROM Estados e
+        JOIN Tickets t ON e.id_estado = t.id_estado
+        WHERE t.id_ticket = @id_ticket;
+        
+        COMMIT TRANSACTION;
+        
+        -- Retornar resultado
+        SELECT 
+            1 AS success,
+            'Comentario agregado exitosamente' AS message,
+            @id_comentario_nuevo AS idComentario,
+            @id_respuesta_nueva AS idRespuesta,
+            @nombre_estado AS estadoTicket;
+        
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR(@ErrorMessage, 16, 1);
+    END CATCH
 END;
 GO
 -- =============================================

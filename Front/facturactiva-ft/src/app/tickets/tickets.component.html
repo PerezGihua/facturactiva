@@ -203,5 +203,6 @@
 <app-modalticket
   *ngIf="mostrarModalAgente"
   [ticketCodigo]="codigoTicketSeleccionado"
+  [ticketId]="ticketIdSeleccionado"
   (cerrarModal)="cerrarModalAgente()"
 ></app-modalticket>

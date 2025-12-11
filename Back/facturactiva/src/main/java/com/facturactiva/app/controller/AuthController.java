@@ -1,14 +1,15 @@
 package com.facturactiva.app.controller;
 
-import com.facturactiva.app.dto.LoginRequest;
-import com.facturactiva.app.dto.LoginResponse;
-import com.facturactiva.app.dto.RegisterRequest;
-import com.facturactiva.app.dto.RegisterResponse;
 import com.facturactiva.app.dto.UserDetailsDTO;
+import com.facturactiva.app.model.LoginRequest;
+import com.facturactiva.app.model.LoginResponse;
+import com.facturactiva.app.model.RegisterRequest;
+import com.facturactiva.app.model.RegisterResponse;
 import com.facturactiva.app.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

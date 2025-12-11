@@ -63,6 +63,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   // Modal para agente de soporte
   mostrarModalAgente = false;
   codigoTicketSeleccionado = '';
+  ticketIdSeleccionado: number | null = null;
 
   private navigationSubscription: Subscription;
 
@@ -325,11 +326,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
   // ⬅️ MÉTODO MODIFICADO
   editarTicket(codigo: string) {
     const idRol = localStorage.getItem('idRol');
-    
+
     if (idRol === '3') {
       // Si es Agente de Soporte, abrir modal
-      this.codigoTicketSeleccionado = codigo;
-      this.mostrarModalAgente = true;
+      // Buscar el ticket para obtener su idTicket
+      const ticket = this.tickets.find(t => t.codigo === codigo);
+      if (ticket && ticket.idTicket) {
+        this.codigoTicketSeleccionado = codigo;
+        this.ticketIdSeleccionado = ticket.idTicket;
+        this.mostrarModalAgente = true;
+      }
     } else {
       // Si es Cliente, abrir panel lateral
       this.router.navigate(['editar', codigo], { relativeTo: this.route });
@@ -340,6 +346,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   cerrarModalAgente() {
     this.mostrarModalAgente = false;
     this.codigoTicketSeleccionado = '';
+    this.ticketIdSeleccionado = null;
   }
 
   eliminarTicket(codigo: string) {

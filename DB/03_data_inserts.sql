@@ -87,11 +87,15 @@ update Usuarios set activo = '0' where id_usuario = 4;
 update Usuarios set activo = '0' where id_usuario = 5;
 update Usuarios set activo = '0' where id_usuario = 6;
 
+update Tickets set activo = 1 where id_ticket = '17';
+
 -- =============================================
 -- CONSULTAS
 -- =============================================
 
 SELECT * FROM ArchivosAdjuntos;
+SELECT * FROM Comentarios;
+SELECT * FROM RespuestasComentarios;
 
 SELECT * FROM TiposComprobante ORDER BY id_comprobante;
 SELECT * FROM Prioridades ORDER BY nivel;

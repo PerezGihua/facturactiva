@@ -10,10 +10,18 @@
     </div>
 
     <!-- Contenido del Modal -->
-    <div class="modal-body" *ngIf="ticket">
-      
-      <!-- Información del Ticket en 2 columnas -->
-      <div class="ticket-info-grid">
+    <div class="modal-body">
+
+      <!-- Spinner mientras carga -->
+      <div *ngIf="isLoadingTicket" class="loading-container">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Cargando detalles del ticket...</p>
+      </div>
+
+      <!-- Contenido del ticket cuando ya cargó -->
+      <div *ngIf="!isLoadingTicket && ticket">
+        <!-- Información del Ticket en 2 columnas -->
+        <div class="ticket-info-grid">
         
         <!-- Columna Izquierda -->
         <div class="info-column">
@@ -110,7 +118,7 @@
                   <i class="fa-solid fa-user-circle"></i>
                   <strong>{{ comentario.autor }}</strong>
                   <span class="rol-badge" [ngClass]="comentario.rol">
-                    {{ comentario.rol === 'agente' ? 'Agente' : 'Cliente' }}
+                    {{ comentario.tipoUsuario }}
                   </span>
                 </div>
                 <span class="fecha">{{ comentario.fecha }}</span>
@@ -147,7 +155,7 @@
                       <i class="fa-solid fa-user-circle"></i>
                       <strong>{{ respuesta.autor }}</strong>
                       <span class="rol-badge" [ngClass]="respuesta.rol">
-                        {{ respuesta.rol === 'agente' ? 'Agente' : 'Cliente' }}
+                        {{ respuesta.tipoUsuario }}
                       </span>
                     </div>
                     <span class="fecha">{{ respuesta.fecha }}</span>
@@ -170,6 +178,7 @@
             <i class="fa-solid fa-paper-plane"></i> Agregar Comentario
           </button>
         </div>
+      </div>
       </div>
     </div>
   </div>

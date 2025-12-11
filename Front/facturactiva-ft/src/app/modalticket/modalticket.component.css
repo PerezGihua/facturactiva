@@ -104,6 +104,28 @@ i[class*="fa-"] {
   flex: 1;
 }
 
+/* Loading container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 15px;
+}
+
+.loading-container i {
+  font-size: 48px;
+  color: #2e7d32;
+}
+
+.loading-container p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+}
+
 /* Grid de información */
 .ticket-info-grid {
   display: grid;

@@ -44,4 +44,38 @@ export class TicketsService {
     }
     return this.http.delete<any>(`${this.baseUrl}/tickets/${ticketId}`, { headers });
   }
+
+  /**
+   * Obtiene los detalles completos de un ticket por su ID.
+   * @param ticketId - ID del ticket
+   * @param token - Token de autenticación
+   */
+  getTicketDetails(ticketId: number, token?: string): Observable<any> {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return this.http.get<any>(`${this.baseUrl}/tickets/${ticketId}`, { headers });
+  }
+
+  /**
+   * Agrega un comentario o respuesta a un ticket.
+   * @param ticketId - ID del ticket
+   * @param contenido - Contenido del comentario
+   * @param idComentarioPadre - ID del comentario padre (null para comentarios principales)
+   * @param token - Token de autenticación
+   */
+  addComment(ticketId: number, contenido: string, idComentarioPadre: number | null, token?: string): Observable<any> {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    const body = {
+      contenido,
+      idComentarioPadre
+    };
+
+    return this.http.post<any>(`${this.baseUrl}/tickets/${ticketId}/comentarios`, body, { headers });
+  }
 }
