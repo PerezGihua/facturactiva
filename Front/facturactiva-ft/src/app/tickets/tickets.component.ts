@@ -299,6 +299,25 @@ export class TicketsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getTicketByCodigo(codigo: string): any {
+  const ticket = this.tickets.find(t => t.codigo === codigo);
+  if (!ticket) return null;
+  
+  return {
+    codigo: ticket.codigo,
+    asunto: ticket.asunto,
+    descripcion: ticket.descripcion,
+    numDocRechazado: ticket.numDocRechazado,
+    fechaCreacion: ticket.fechaCreacion,
+    estado: ticket.estado,
+    tipoComprobante: ticket.tipoComprobante,
+    idTicket: ticket.idTicket,
+    rutaArchivo: ticket.rutaArchivo,
+    nombreArchivo: ticket.nombreArchivo
+  };
+}
+
+
   // FILTRO EN TIEMPO REAL
   filtrarTickets() {
     if (!this.searchTerm.trim()) {
@@ -326,7 +345,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   editarTicket(codigo: string) {
     const idRol = localStorage.getItem('idRol');
     
-    if (idRol === '3') {
+    if (idRol === '3' || idRol === '1') {
       // Si es Agente de Soporte, abrir modal
       this.codigoTicketSeleccionado = codigo;
       this.mostrarModalAgente = true;

@@ -97,7 +97,6 @@
                 <th>Documento</th>
                 <th>Fecha Creación</th>
                 <th>Estado</th>
-                <th></th>
               </tr>
             </thead>
 
@@ -134,7 +133,7 @@
                   </span>
                 </td>
 
-                <td>
+                <!-- <td>
                   <div class="actions">
                     <button
                       *ngIf="idRol === '1'"
@@ -144,7 +143,7 @@
                       <i class="fa-solid fa-trash"></i>
                     </button>
                   </div>
-                </td>
+                </td> -->
               </tr>
             </tbody>
           </table>
@@ -201,6 +200,9 @@
 <app-modalticket
   *ngIf="mostrarModalAgente"
   [ticketCodigo]="codigoTicketSeleccionado"
+  [ticketData]="getTicketByCodigo(codigoTicketSeleccionado)"
   [userRole]="userRole"
+  [idRol]="idRol"
   (cerrarModal)="cerrarModalAgente()"
+  (ticketActualizado)="loadMyTickets()"
 ></app-modalticket>

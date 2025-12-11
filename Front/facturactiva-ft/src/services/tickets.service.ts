@@ -33,6 +33,20 @@ export class TicketsService {
   }
 
   /**
+   * Actualiza un ticket existente.
+   * @param ticketId - ID del ticket a actualizar
+   * @param ticketData - Datos del ticket a actualizar
+   * @param token - Token de autenticación
+   */
+  updateTicket(ticketId: number, ticketData: FormData, token?: string): Observable<any> {
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return this.http.put<any>(`${this.baseUrl}/tickets/${ticketId}`, ticketData, { headers });
+  }
+
+  /**
    * Elimina un ticket por su ID.
    * @param ticketId - ID del ticket a eliminar
    * @param token - Token de autenticación

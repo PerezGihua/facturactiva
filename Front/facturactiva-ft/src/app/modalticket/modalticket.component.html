@@ -17,18 +17,54 @@
         
         <!-- Columna Izquierda -->
         <div class="info-column">
-          <!-- Asunto como título -->
-          <p class="asunto-texto">{{ ticket.asunto }}</p>
+          <!-- Asunto - Editable para clientes -->
+          <div *ngIf="puedeEditarCampos">
+            <label class="label-editable">ASUNTO</label>
+            <input 
+              type="text" 
+              [(ngModel)]="asuntoEditable" 
+              class="input-editable"
+              placeholder="Ingrese el asunto"
+            />
+          </div>
+          <p *ngIf="!puedeEditarCampos" class="asunto-texto">{{ ticket.asunto }}</p>
 
-          <div class="info-item">
+          <!-- N° Documento - Editable para clientes -->
+          <div class="info-item num-documento">
             <label>N° Documento:</label>
-            <span>{{ ticket.numDocRechazado }}</span>
+            <input 
+              *ngIf="puedeEditarCampos"
+              type="text" 
+              [(ngModel)]="numDocumentoEditable" 
+              class="input-inline-editable"
+              placeholder="Número de documento"
+            />
+            <span *ngIf="!puedeEditarCampos">{{ ticket.numDocRechazado }}</span>
           </div>
 
+          <!-- Descripción - Editable para clientes -->
           <div class="info-item">
             <label>Descripción:</label>
-            <p class="descripcion-texto">{{ ticket.descripcion }}</p>
+            <textarea 
+              *ngIf="puedeEditarCampos"
+              [(ngModel)]="descripcionEditable" 
+              class="textarea-editable"
+              rows="4"
+              placeholder="Describa el problema"
+            ></textarea>
+            <p *ngIf="!puedeEditarCampos" class="descripcion-texto">{{ ticket.descripcion }}</p>
           </div>
+
+          <!-- Botón Guardar Cambios - Solo para clientes -->
+          <button 
+            *ngIf="puedeEditarCampos" 
+            class="btn-guardar-cambios"
+            (click)="guardarCambios()"
+            [disabled]="isSaving"
+          >
+            <i class="fa-solid fa-save"></i>
+            {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
         </div>
 
         <!-- Columna Derecha -->
@@ -40,7 +76,9 @@
 
           <div class="info-item">
             <label>Estado:</label>
+            <!-- Solo agentes pueden cambiar el estado -->
             <select 
+              *ngIf="puedeEditarEstado"
               [(ngModel)]="ticket.estado" 
               (change)="cambiarEstado(ticket.estado)"
               [ngClass]="getEstadoClass(ticket.estado)"
@@ -50,6 +88,15 @@
                 {{ estado }}
               </option>
             </select>
+            <!-- Clientes solo ven el estado, no pueden cambiarlo -->
+            <span 
+              *ngIf="!puedeEditarEstado"
+              class="estado-badge"
+              [ngClass]="getEstadoClass(ticket.estado)"
+            >
+              <i class="fa-solid fa-circle"></i>
+              {{ ticket.estado }}
+            </span>
           </div>
 
           <div class="info-item">
@@ -141,7 +188,7 @@
           <div class="comentario-actions">
             <!-- Botón Eliminar - Solo para clientes -->
             <button 
-              *ngIf="userRole === 'cliente'" 
+              *ngIf="idRol === '1'" 
               class="btn-eliminar-ticket" 
               (click)="eliminarTicket()"
             >
@@ -153,6 +200,25 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMACIÓN -->
+<div class="confirmation-overlay" *ngIf="mostrarConfirmacion" (click)="cancelarAccion()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="confirmation-icon" [ngClass]="tipoConfirmacion === 'eliminar' ? 'icon-eliminar' : 'icon-guardar'">
+      <i class="fa-solid" [ngClass]="tipoConfirmacion === 'eliminar' ? 'fa-triangle-exclamation' : 'fa-circle-question'"></i>
+    </div>
+    <h3>{{ tituloConfirmacion }}</h3>
+    <p>{{ mensajeConfirmacion }}</p>
+    <div class="confirmation-buttons">
+      <button class="btn-cancelar" (click)="cancelarAccion()">
+        <i class="fa-solid fa-xmark"></i> No
+      </button>
+      <button class="btn-confirmar" [ngClass]="tipoConfirmacion === 'eliminar' ? 'btn-eliminar-confirm' : 'btn-guardar-confirm'" (click)="confirmarAccion()">
+        <i class="fa-solid fa-check"></i> Sí
+      </button>
     </div>
   </div>
 </div>

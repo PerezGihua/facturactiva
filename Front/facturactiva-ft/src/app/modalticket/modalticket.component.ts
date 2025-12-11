@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TicketsService } from '../../services/tickets.service';
 
 interface Comentario {
   id: number;
@@ -38,9 +39,22 @@ interface TicketDetalle {
 export class ModalticketComponent implements OnInit {
   @Input() ticketCodigo: string = '';
   @Input() ticketData: TicketDetalle | null = null;
+  @Input() userRole: string = '';
+  @Input() idRol: string = '';
   @Output() cerrarModal = new EventEmitter<void>();
+  @Output() ticketActualizado = new EventEmitter<void>();
 
   ticket: TicketDetalle | null = null;
+  
+  // Campos editables (solo para cliente)
+  asuntoEditable: string = '';
+  descripcionEditable: string = '';
+  numDocumentoEditable: string = '';
+  
+  // Estado de edición
+  isEditMode: boolean = false;
+  isSaving: boolean = false;
+
   comentarios: Comentario[] = [];
   nuevoComentario: string = '';
   respuestaTexto: { [key: number]: string } = {};
@@ -55,49 +69,45 @@ export class ModalticketComponent implements OnInit {
     'Cerrado (Solucionado)'
   ];
 
-  @Input() userRole: string = '';
-
-    // Agrega este método antes del método cerrar():
-    eliminarTicket() {
-      if (!this.ticket || !this.ticket.idTicket) {
-        alert('No se puede eliminar este ticket');
-        return;
-      }
-
-      const confirmacion = confirm(`¿Estás seguro de que deseas eliminar el ticket ${this.ticket.codigo}?`);
-      
-      if (confirmacion) {
-        // Aquí irá la llamada al backend para eliminar
-        console.log('Eliminando ticket:', this.ticket.idTicket);
-        
-        // Por ahora solo cerramos el modal
-        // TODO: Implementar llamada al servicio de tickets
-        this.cerrar();
-      }
-    }
-
+  // Modal de confirmación
+  mostrarConfirmacion: boolean = false;
+  tituloConfirmacion: string = '';
+  mensajeConfirmacion: string = '';
+  tipoConfirmacion: 'guardar' | 'eliminar' = 'guardar';
+  accionPendiente: (() => void) | null = null;
 
   ngOnInit() {
     this.cargarTicket();
     this.cargarComentarios();
+    
+    // Determinar si es modo edición (solo para clientes)
+    this.isEditMode = this.idRol === '1';
   }
 
-    cargarTicket() {
-      // Si se recibió ticketData del componente padre, usarlo
-      if (this.ticketData) {
-        this.ticket = { ...this.ticketData };
-      } else {
-        // Datos de prueba
-        this.ticket = {
-          codigo: this.ticketCodigo || 'BXA-004',
-          asunto: 'Rechazo de Boleta',
-          numDocRechazado: '3215665465',
-          descripcion: 'Tuve un problema con mi boleta, no me la aceptan.',
-          fechaCreacion: '10/12/2025',
-          estado: 'Nuevo'
-        };
-      }
+  cargarTicket() {
+    // Si se recibió ticketData del componente padre, usarlo
+    if (this.ticketData) {
+      this.ticket = { ...this.ticketData };
+      
+      // Inicializar campos editables
+      this.asuntoEditable = this.ticket.asunto || '';
+      this.descripcionEditable = this.ticket.descripcion || '';
+      this.numDocumentoEditable = this.ticket.numDocRechazado || '';
+    } else {
+      // Fallback: datos por defecto si no se recibió ticketData
+      this.ticket = {
+        codigo: this.ticketCodigo,
+        asunto: 'Sin asunto',
+        descripcion: 'Sin descripción',
+        fechaCreacion: new Date().toLocaleDateString('es-PE'),
+        estado: 'Nuevo'
+      };
+      
+      this.asuntoEditable = this.ticket.asunto;
+      this.descripcionEditable = this.ticket.descripcion;
+      this.numDocumentoEditable = '';
     }
+  }
 
   cargarComentarios() {
     // TODO: Aquí irá la llamada al backend
@@ -123,6 +133,96 @@ export class ModalticketComponent implements OnInit {
     ];
   }
 
+  // Método para guardar cambios (MODIFICADO CON CONFIRMACIÓN)
+  guardarCambios() {
+    if (!this.ticket || !this.ticket.idTicket) {
+      alert('No se puede guardar. Ticket inválido.');
+      return;
+    }
+
+    // Validaciones
+    if (!this.asuntoEditable.trim()) {
+      alert('El asunto es requerido');
+      return;
+    }
+
+    if (!this.descripcionEditable.trim()) {
+      alert('La descripción es requerida');
+      return;
+    }
+
+    if (!this.numDocumentoEditable.trim()) {
+      alert('El número de documento es requerido');
+      return;
+    }
+
+    // Mostrar modal de confirmación
+    this.tituloConfirmacion = '¿Desea guardar cambios?';
+    this.mensajeConfirmacion = 'Los cambios realizados se guardarán permanentemente.';
+    this.tipoConfirmacion = 'guardar';
+    this.accionPendiente = () => this.ejecutarGuardado();
+    this.mostrarConfirmacion = true;
+  }
+
+  // Nuevo método para ejecutar el guardado
+  private ejecutarGuardado() {
+    // Preparar FormData
+    const formData = new FormData();
+    formData.append('documento', this.numDocumentoEditable);
+    formData.append('asunto', this.asuntoEditable);
+    formData.append('descripcion', this.descripcionEditable);
+    formData.append('tipo', this.ticket?.tipoComprobante || '');
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    this.isSaving = true;
+
+    console.log('Guardando cambios del ticket:', this.ticket?.idTicket, formData);
+    
+    // Simular guardado exitoso por ahora
+    setTimeout(() => {
+      this.isSaving = false;
+      
+      // Actualizar los valores del ticket
+      if (this.ticket) {
+        this.ticket.asunto = this.asuntoEditable;
+        this.ticket.descripcion = this.descripcionEditable;
+        this.ticket.numDocRechazado = this.numDocumentoEditable;
+      }
+      
+      alert('Cambios guardados exitosamente');
+      
+      // Emitir evento para que se recargue la lista
+      this.ticketActualizado.emit();
+    }, 1000);
+
+    /* Implementación real cuando tengas el método en el servicio:
+    this.ticketsService.updateTicket(this.ticket.idTicket, formData, token || undefined).subscribe({
+      next: (response) => {
+        console.log('Ticket actualizado:', response);
+        this.isSaving = false;
+        
+        // Actualizar los valores del ticket
+        if (this.ticket) {
+          this.ticket.asunto = this.asuntoEditable;
+          this.ticket.descripcion = this.descripcionEditable;
+          this.ticket.numDocRechazado = this.numDocumentoEditable;
+        }
+        
+        alert('Cambios guardados exitosamente');
+        
+        // Emitir evento para que se recargue la lista
+        this.ticketActualizado.emit();
+      },
+      error: (error) => {
+        console.error('Error al actualizar ticket:', error);
+        this.isSaving = false;
+        alert('Error al guardar los cambios. Intente nuevamente.');
+      }
+    });
+    */
+  }
+
   cambiarEstado(nuevoEstado: string) {
     if (this.ticket) {
       this.ticket.estado = nuevoEstado;
@@ -136,8 +236,8 @@ export class ModalticketComponent implements OnInit {
 
     const nuevoComentarioObj: Comentario = {
       id: Date.now(),
-      autor: 'Rodrigo Gallardo', // El agente actual
-      rol: 'agente',
+      autor: 'Rodrigo Gallardo', // El usuario actual
+      rol: this.idRol === '1' ? 'cliente' : 'agente',
       texto: this.nuevoComentario,
       fecha: new Date().toLocaleString('es-PE'),
       respuestas: []
@@ -156,8 +256,8 @@ export class ModalticketComponent implements OnInit {
 
     const nuevaRespuesta: Comentario = {
       id: Date.now(),
-      autor: 'Rodrigo Gallardo', // El agente actual
-      rol: 'agente',
+      autor: 'Rodrigo Gallardo', // El usuario actual
+      rol: this.idRol === '1' ? 'cliente' : 'agente',
       texto: textoRespuesta,
       fecha: new Date().toLocaleString('es-PE'),
       respuestas: []
@@ -190,6 +290,48 @@ export class ModalticketComponent implements OnInit {
     this.mostrarRespuestas[comentarioId] = !this.mostrarRespuestas[comentarioId];
   }
 
+  // Método para eliminar ticket (MODIFICADO CON CONFIRMACIÓN)
+  eliminarTicket() {
+    if (!this.ticket || !this.ticket.idTicket) {
+      alert('No se puede eliminar este ticket');
+      return;
+    }
+
+    // Mostrar modal de confirmación
+    this.tituloConfirmacion = '¿Está seguro que quiere eliminar?';
+    this.mensajeConfirmacion = `El ticket ${this.ticket.codigo} se eliminará permanentemente y no podrá recuperarse.`;
+    this.tipoConfirmacion = 'eliminar';
+    this.accionPendiente = () => this.ejecutarEliminacion();
+    this.mostrarConfirmacion = true;
+  }
+
+  // Nuevo método para ejecutar la eliminación
+  private ejecutarEliminacion() {
+    // TODO: Implementar llamada al servicio de tickets
+    console.log('Eliminando ticket:', this.ticket?.idTicket);
+    
+    // Emitir evento para recargar lista y cerrar modal
+    this.ticketActualizado.emit();
+    this.cerrar();
+  }
+
+  // Métodos para controlar el modal de confirmación
+  confirmarAccion() {
+    if (this.accionPendiente) {
+      this.accionPendiente();
+    }
+    this.cerrarConfirmacion();
+  }
+
+  cancelarAccion() {
+    this.cerrarConfirmacion();
+  }
+
+  private cerrarConfirmacion() {
+    this.mostrarConfirmacion = false;
+    this.accionPendiente = null;
+  }
+
   cerrar() {
     this.cerrarModal.emit();
   }
@@ -218,5 +360,15 @@ export class ModalticketComponent implements OnInit {
       default:
         return '';
     }
+  }
+  
+  // Determinar si el usuario puede editar campos
+  get puedeEditarCampos(): boolean {
+    return this.idRol === '1'; // Solo clientes
+  }
+  
+  // Determinar si el usuario puede cambiar el estado
+  get puedeEditarEstado(): boolean {
+    return this.idRol === '3'; // Solo agentes
   }
 }
