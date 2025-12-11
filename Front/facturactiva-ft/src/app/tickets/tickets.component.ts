@@ -317,6 +317,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
   };
 }
 
+cerrarPanel() {
+  this.router.navigate(['/tickets']);
+}
 
   // FILTRO EN TIEMPO REAL
   filtrarTickets() {

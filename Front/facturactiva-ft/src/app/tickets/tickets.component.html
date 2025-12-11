@@ -154,6 +154,7 @@
       <div
         class="overlay"
         *ngIf="router.url.includes('/tickets/crear') || router.url.includes('/tickets/editar')"
+        (click)="cerrarPanel()"
       ></div>
 
       <!-- PANEL DERECHO -->
